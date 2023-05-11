@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 
+	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -34,23 +35,35 @@ import (
 //go:generate mockgen -source=./client.go -destination=./mock/client_generated.go -package=mock
 
 type Client interface {
-	// // VirtualMachine CRUD operations
-
-	// CreateVirtualMachine(vm *kubevirtapiv1.VirtualMachine) error
-	// GetVirtualMachine(namespace string, name string) (*kubevirtapiv1.VirtualMachine, error)
-	// UpdateVirtualMachine(namespace string, name string, vm *kubevirtapiv1.VirtualMachine, data []byte) error
-	// DeleteVirtualMachine(namespace string, name string) error
-
-	// // DataVolume CRUD operations
-
-	// CreateDataVolume(vm *cdiv1.DataVolume) error
-	// GetDataVolume(namespace string, name string) (*cdiv1.DataVolume, error)
-	// UpdateDataVolume(namespace string, name string, dv *cdiv1.DataVolume, data []byte) error
-	// DeleteDataVolume(namespace string, name string) error
+	// PyTorchJob CRUD operations
+	CreatePytorchJob(vm *kubeflowv1.PyTorchJob) error
+	GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error)
+	UpdatePytorchJob(namespace string, name string, vm *kubeflowv1.PyTorchJob, data []byte) error
+	DeletePytorchJob(namespace string, name string) error
 }
 
 type client struct {
 	dynamicClient dynamic.Interface
+}
+
+// CreatePytorchJob implements Client
+func (*client) CreatePytorchJob(vm *kubeflowv1.PyTorchJob) error {
+	panic("unimplemented")
+}
+
+// DeletePytorchJob implements Client
+func (*client) DeletePytorchJob(namespace string, name string) error {
+	panic("unimplemented")
+}
+
+// GetPytorchJob implements Client
+func (*client) GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error) {
+	panic("unimplemented")
+}
+
+// UpdatePytorchJob implements Client
+func (*client) UpdatePytorchJob(namespace string, name string, vm *kubeflowv1.PyTorchJob, data []byte) error {
+	panic("unimplemented")
 }
 
 // New creates our client wrapper object for the actual kubeVirt and kubernetes clients we use.
