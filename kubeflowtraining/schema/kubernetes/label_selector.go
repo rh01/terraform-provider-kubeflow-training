@@ -1,8 +1,8 @@
-package k8s
+package kubernetes
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/kubevirt/terraform-provider-kubevirt/kubevirt/utils"
+	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

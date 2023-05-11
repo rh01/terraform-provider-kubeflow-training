@@ -1,4 +1,4 @@
-package k8s
+package kubernetes
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
