@@ -2,7 +2,7 @@ package entities
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/kubevirt/terraform-provider-kubevirt/kubevirt/utils"
+	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
 	k8sv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

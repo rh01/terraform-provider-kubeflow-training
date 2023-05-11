@@ -182,14 +182,6 @@ github.com/hashicorp/errwrap
 # github.com/hashicorp/go-cleanhttp v0.5.2
 ## explicit; go 1.13
 github.com/hashicorp/go-cleanhttp
-# github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
-## explicit; go 1.12
-github.com/hashicorp/go-cty/cty
-github.com/hashicorp/go-cty/cty/convert
-github.com/hashicorp/go-cty/cty/gocty
-github.com/hashicorp/go-cty/cty/json
-github.com/hashicorp/go-cty/cty/msgpack
-github.com/hashicorp/go-cty/cty/set
 # github.com/hashicorp/go-getter v1.4.2-0.20200106182914-9813cbd4eb02
 ## explicit
 github.com/hashicorp/go-getter
@@ -246,17 +238,6 @@ github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/hashicorp/terraform-json v0.14.0
 ## explicit; go 1.13
 github.com/hashicorp/terraform-json
-# github.com/hashicorp/terraform-plugin-go v0.14.1
-## explicit; go 1.18
-github.com/hashicorp/terraform-plugin-go/tfprotov5
-github.com/hashicorp/terraform-plugin-go/tftypes
-# github.com/hashicorp/terraform-plugin-log v0.7.0
-## explicit; go 1.17
-github.com/hashicorp/terraform-plugin-log/internal/fieldutils
-github.com/hashicorp/terraform-plugin-log/internal/hclogutils
-github.com/hashicorp/terraform-plugin-log/internal/logging
-github.com/hashicorp/terraform-plugin-log/tflog
-github.com/hashicorp/terraform-plugin-log/tfsdklog
 # github.com/hashicorp/terraform-plugin-sdk v1.16.0 => github.com/openshift/hashicorp-terraform-plugin-sdk v1.14.0-openshift
 ## explicit; go 1.12
 github.com/hashicorp/terraform-plugin-sdk/acctest
@@ -303,21 +284,6 @@ github.com/hashicorp/terraform-plugin-sdk/plugin
 github.com/hashicorp/terraform-plugin-sdk/terraform
 github.com/hashicorp/terraform-plugin-sdk/tfdiags
 github.com/hashicorp/terraform-plugin-sdk/tfplugin5
-# github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
-## explicit; go 1.18
-github.com/hashicorp/terraform-plugin-sdk/v2/diag
-github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging
-github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/addrs
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/configs/configschema
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/configs/hcl2shim
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/helper/hashcode
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/logging
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/plans/objchange
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/plugin/convert
-github.com/hashicorp/terraform-plugin-sdk/v2/internal/tfdiags
-github.com/hashicorp/terraform-plugin-sdk/v2/meta
-github.com/hashicorp/terraform-plugin-sdk/v2/terraform
 # github.com/hashicorp/terraform-plugin-test v1.3.0
 ## explicit; go 1.12
 github.com/hashicorp/terraform-plugin-test
@@ -350,9 +316,6 @@ github.com/kubeflow/common/pkg/apis/common/v1
 # github.com/kubeflow/training-operator v1.6.0
 ## explicit; go 1.19
 github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1
-# github.com/kubevirt/terraform-provider-kubevirt v0.0.1
-## explicit; go 1.18
-github.com/kubevirt/terraform-provider-kubevirt/kubevirt/utils
 # github.com/mailru/easyjson v0.7.7
 ## explicit; go 1.12
 github.com/mailru/easyjson/buffer
@@ -424,10 +387,6 @@ github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/hash
 github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
-# github.com/vmihailenco/msgpack v4.0.4+incompatible
-## explicit
-github.com/vmihailenco/msgpack
-github.com/vmihailenco/msgpack/codes
 # github.com/vmihailenco/msgpack/v4 v4.3.12
 ## explicit; go 1.11
 github.com/vmihailenco/msgpack/v4
