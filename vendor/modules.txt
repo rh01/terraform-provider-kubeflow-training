@@ -213,6 +213,17 @@ github.com/hashicorp/go-uuid
 # github.com/hashicorp/go-version v1.6.0
 ## explicit
 github.com/hashicorp/go-version
+# github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
+## explicit
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
 # github.com/hashicorp/hcl/v2 v2.15.0
 ## explicit; go 1.18
 github.com/hashicorp/hcl/v2
@@ -221,6 +232,7 @@ github.com/hashicorp/hcl/v2/ext/dynblock
 github.com/hashicorp/hcl/v2/ext/typeexpr
 github.com/hashicorp/hcl/v2/gohcl
 github.com/hashicorp/hcl/v2/hcldec
+github.com/hashicorp/hcl/v2/hcled
 github.com/hashicorp/hcl/v2/hclparse
 github.com/hashicorp/hcl/v2/hclsyntax
 github.com/hashicorp/hcl/v2/hclwrite
@@ -230,6 +242,10 @@ github.com/hashicorp/hcl/v2/json
 github.com/hashicorp/logutils
 # github.com/hashicorp/terraform-config-inspect v0.0.0-20191212124732-c6ae6269b9d7
 ## explicit
+github.com/hashicorp/terraform-config-inspect/tfconfig
+# github.com/hashicorp/terraform-json v0.14.0
+## explicit; go 1.13
+github.com/hashicorp/terraform-json
 # github.com/hashicorp/terraform-plugin-go v0.14.1
 ## explicit; go 1.18
 github.com/hashicorp/terraform-plugin-go/tfprotov5
@@ -243,22 +259,32 @@ github.com/hashicorp/terraform-plugin-log/tflog
 github.com/hashicorp/terraform-plugin-log/tfsdklog
 # github.com/hashicorp/terraform-plugin-sdk v1.16.0 => github.com/openshift/hashicorp-terraform-plugin-sdk v1.14.0-openshift
 ## explicit; go 1.12
+github.com/hashicorp/terraform-plugin-sdk/acctest
 github.com/hashicorp/terraform-plugin-sdk/helper/hashcode
+github.com/hashicorp/terraform-plugin-sdk/helper/logging
+github.com/hashicorp/terraform-plugin-sdk/helper/resource
 github.com/hashicorp/terraform-plugin-sdk/helper/schema
 github.com/hashicorp/terraform-plugin-sdk/helper/structure
 github.com/hashicorp/terraform-plugin-sdk/helper/validation
 github.com/hashicorp/terraform-plugin-sdk/httpclient
 github.com/hashicorp/terraform-plugin-sdk/internal/addrs
+github.com/hashicorp/terraform-plugin-sdk/internal/command/format
 github.com/hashicorp/terraform-plugin-sdk/internal/configs
+github.com/hashicorp/terraform-plugin-sdk/internal/configs/configload
 github.com/hashicorp/terraform-plugin-sdk/internal/configs/configschema
 github.com/hashicorp/terraform-plugin-sdk/internal/configs/hcl2shim
 github.com/hashicorp/terraform-plugin-sdk/internal/dag
+github.com/hashicorp/terraform-plugin-sdk/internal/earlyconfig
+github.com/hashicorp/terraform-plugin-sdk/internal/flatmap
+github.com/hashicorp/terraform-plugin-sdk/internal/helper/config
 github.com/hashicorp/terraform-plugin-sdk/internal/helper/didyoumean
 github.com/hashicorp/terraform-plugin-sdk/internal/helper/plugin
 github.com/hashicorp/terraform-plugin-sdk/internal/httpclient
+github.com/hashicorp/terraform-plugin-sdk/internal/initwd
 github.com/hashicorp/terraform-plugin-sdk/internal/lang
 github.com/hashicorp/terraform-plugin-sdk/internal/lang/blocktoattr
 github.com/hashicorp/terraform-plugin-sdk/internal/lang/funcs
+github.com/hashicorp/terraform-plugin-sdk/internal/modsdir
 github.com/hashicorp/terraform-plugin-sdk/internal/moduledeps
 github.com/hashicorp/terraform-plugin-sdk/internal/plans
 github.com/hashicorp/terraform-plugin-sdk/internal/plans/objchange
@@ -292,6 +318,9 @@ github.com/hashicorp/terraform-plugin-sdk/v2/internal/plugin/convert
 github.com/hashicorp/terraform-plugin-sdk/v2/internal/tfdiags
 github.com/hashicorp/terraform-plugin-sdk/v2/meta
 github.com/hashicorp/terraform-plugin-sdk/v2/terraform
+# github.com/hashicorp/terraform-plugin-test v1.3.0
+## explicit; go 1.12
+github.com/hashicorp/terraform-plugin-test
 # github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734
 ## explicit; go 1.12
 github.com/hashicorp/terraform-svchost
@@ -324,7 +353,6 @@ github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1
 # github.com/kubevirt/terraform-provider-kubevirt v0.0.1
 ## explicit; go 1.18
 github.com/kubevirt/terraform-provider-kubevirt/kubevirt/utils
-github.com/kubevirt/terraform-provider-kubevirt/kubevirt/utils/patch
 # github.com/mailru/easyjson v0.7.7
 ## explicit; go 1.12
 github.com/mailru/easyjson/buffer
@@ -339,6 +367,9 @@ github.com/mattn/go-isatty
 # github.com/mitchellh/cli v1.1.4
 ## explicit; go 1.11
 github.com/mitchellh/cli
+# github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
+## explicit
+github.com/mitchellh/colorstring
 # github.com/mitchellh/copystructure v1.2.0
 ## explicit; go 1.15
 github.com/mitchellh/copystructure
@@ -587,6 +618,7 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
+google.golang.org/grpc/test/bufconn
 # google.golang.org/protobuf v1.28.1
 ## explicit; go 1.11
 google.golang.org/protobuf/encoding/protojson

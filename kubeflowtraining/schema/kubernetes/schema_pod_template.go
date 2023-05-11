@@ -1,19 +1,16 @@
 package kubernetes
 
 import (
-	"fmt"
-
 	corev1 "k8s.io/api/core/v1"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func PodTemplateFields(owner string) map[string]*schema.Schema {
+func PodTemplateFields() map[string]*schema.Schema {
 	s := map[string]*schema.Schema{
-		"metadata": metadataSchema(owner, true),
 		"spec": {
 			Type:        schema.TypeList,
-			Description: fmt.Sprintf("Spec of the pods owned by the %s", owner),
+			Description: "Specification of the desired behavior of the pod. More info: " + "" + "https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status" + "" + "",
 			Optional:    true,
 			MaxItems:    1,
 			Elem: &schema.Resource{

@@ -6,6 +6,8 @@ package mock
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	v1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
+	reflect "reflect"
 )
 
 // MockClient is a mock of Client interface
@@ -29,4 +31,61 @@ func NewMockClient(ctrl *gomock.Controller) *MockClient {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
+}
+
+// CreatePytorchJob mocks base method
+func (m *MockClient) CreatePytorchJob(vm *v1.PyTorchJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePytorchJob", vm)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreatePytorchJob indicates an expected call of CreatePytorchJob
+func (mr *MockClientMockRecorder) CreatePytorchJob(vm interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePytorchJob", reflect.TypeOf((*MockClient)(nil).CreatePytorchJob), vm)
+}
+
+// GetPytorchJob mocks base method
+func (m *MockClient) GetPytorchJob(namespace, name string) (*v1.PyTorchJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPytorchJob", namespace, name)
+	ret0, _ := ret[0].(*v1.PyTorchJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPytorchJob indicates an expected call of GetPytorchJob
+func (mr *MockClientMockRecorder) GetPytorchJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPytorchJob", reflect.TypeOf((*MockClient)(nil).GetPytorchJob), namespace, name)
+}
+
+// UpdatePytorchJob mocks base method
+func (m *MockClient) UpdatePytorchJob(namespace, name string, vm *v1.PyTorchJob, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePytorchJob", namespace, name, vm, data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePytorchJob indicates an expected call of UpdatePytorchJob
+func (mr *MockClientMockRecorder) UpdatePytorchJob(namespace, name, vm, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePytorchJob", reflect.TypeOf((*MockClient)(nil).UpdatePytorchJob), namespace, name, vm, data)
+}
+
+// DeletePytorchJob mocks base method
+func (m *MockClient) DeletePytorchJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePytorchJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePytorchJob indicates an expected call of DeletePytorchJob
+func (mr *MockClientMockRecorder) DeletePytorchJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePytorchJob", reflect.TypeOf((*MockClient)(nil).DeletePytorchJob), namespace, name)
 }

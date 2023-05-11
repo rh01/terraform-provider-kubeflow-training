@@ -102,7 +102,9 @@ func Provider() terraform.ResourceProvider {
 				Description: "Load local kubeconfig.",
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"kubeflow_pytorch_job": resourceKubeFlowPytorchJob(),
+		},
 	}
 	p.ConfigureFunc = func(resourceData *schema.ResourceData) (interface{}, error) {
 		terraformVersion := p.TerraformVersion

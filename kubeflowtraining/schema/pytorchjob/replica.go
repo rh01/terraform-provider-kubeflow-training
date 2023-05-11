@@ -8,7 +8,21 @@ import (
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/kubernetes"
 )
 
+// A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.
+// For example,
+//
+//	{
+//	  "Master": PyTorchReplicaSpec,
+//	  "Worker": PyTorchReplicaSpec,
+//	}
 func pytorchJobReplicaSpecFields() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"master": pytorchJobReplicaSpecSchema(),
+		"worker": pytorchJobReplicaSpecSchema(),
+	}
+}
+
+func pytorchJobReplicaSpecTemplateFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"replicas": &schema.Schema{
 			Type:     schema.TypeInt,
@@ -19,9 +33,7 @@ func pytorchJobReplicaSpecFields() map[string]*schema.Schema {
 			Type:     schema.TypeList,
 			MaxItems: 1,
 			Elem: &schema.Resource{
-				Schema: kubernetes.PodTemplateFields(
-					"pytorch_job",
-				),
+				Schema: kubernetes.PodTemplateFields(),
 			},
 			Optional: true,
 		},
@@ -37,7 +49,7 @@ func pytorchJobReplicaSpecSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 		Elem: &schema.Resource{
-			Schema: pytorchJobReplicaSpecFields(),
+			Schema: pytorchJobReplicaSpecTemplateFields(),
 		},
 		Optional: true,
 	}

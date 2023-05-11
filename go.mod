@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/terraform-plugin-sdk v1.16.0
+	github.com/kubeflow/common v0.4.6
 	github.com/kubeflow/training-operator v1.6.0
 	github.com/kubevirt/terraform-provider-kubevirt v0.0.1
 	github.com/mitchellh/go-homedir v1.1.0
@@ -60,12 +61,15 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
+	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
 	github.com/hashicorp/hcl/v2 v2.15.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20191212124732-c6ae6269b9d7 // indirect
+	github.com/hashicorp/terraform-json v0.14.0 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.14.1 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.7.0 // indirect
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1 // indirect
+	github.com/hashicorp/terraform-plugin-test v1.3.0 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
@@ -73,11 +77,11 @@ require (
 	github.com/jmespath/go-jmespath v0.3.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/kubeflow/common v0.4.6 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/cli v1.1.4 // indirect
+	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
