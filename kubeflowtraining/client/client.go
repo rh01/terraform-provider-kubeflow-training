@@ -22,7 +22,7 @@ import (
 	"log"
 
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -47,23 +47,58 @@ type client struct {
 }
 
 // CreatePytorchJob implements Client
-func (*client) CreatePytorchJob(vm *kubeflowv1.PyTorchJob) error {
-	panic("unimplemented")
+func (c *client) CreatePytorchJob(ptj *kubeflowv1.PyTorchJob) error {
+	ptjUpdateTypeMeta(ptj)
+	return c.createResource(ptj, ptj.Namespace, ptjRes())
 }
 
 // DeletePytorchJob implements Client
-func (*client) DeletePytorchJob(namespace string, name string) error {
-	panic("unimplemented")
+func (c *client) DeletePytorchJob(namespace string, name string) error {
+	return c.deleteResource(namespace, name, ptjRes())
 }
 
 // GetPytorchJob implements Client
-func (*client) GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error) {
-	panic("unimplemented")
+func (c *client) GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error) {
+	var ptj kubeflowv1.PyTorchJob
+	resp, err := c.getResource(namespace, name, ptjRes())
+	if err != nil {
+		if errors.IsNotFound(err) {
+			log.Printf("[Warning] VirtualMachine %s not found (namespace=%s)", name, namespace)
+			return nil, err
+		}
+		msg := fmt.Sprintf("Failed to get VirtualMachine, with error: %v", err)
+		log.Printf("[Error] %s", msg)
+		return nil, fmt.Errorf(msg)
+	}
+	unstructured := resp.UnstructuredContent()
+	if err := runtime.DefaultUnstructuredConverter.FromUnstructured(unstructured, &ptj); err != nil {
+		msg := fmt.Sprintf("Failed to translate unstructed to VirtualMachine, with error: %v", err)
+		log.Printf("[Error] %s", msg)
+		return nil, fmt.Errorf(msg)
+	}
+	return &ptj, nil
 }
 
 // UpdatePytorchJob implements Client
-func (*client) UpdatePytorchJob(namespace string, name string, vm *kubeflowv1.PyTorchJob, data []byte) error {
-	panic("unimplemented")
+func (c *client) UpdatePytorchJob(namespace string, name string, vm *kubeflowv1.PyTorchJob, data []byte) error {
+	ptjUpdateTypeMeta(vm)
+	return c.updateResource(namespace, name, ptjRes(), vm, data)
+}
+
+func ptjUpdateTypeMeta(vm *kubeflowv1.PyTorchJob) {
+	vm.TypeMeta = metav1.TypeMeta{
+		Kind:       "PytorchJob",
+		APIVersion: kubeflowv1.GroupVersion.String(),
+	}
+}
+
+func ptjRes() schema.GroupVersionResource {
+	return schema.GroupVersionResource{
+		Group:    kubeflowv1.GroupVersion.Group,
+		Version:  kubeflowv1.GroupVersion.Version,
+		Resource: "pytorchjobs",
+	}
+
 }
 
 // New creates our client wrapper object for the actual kubeVirt and kubernetes clients we use.
@@ -80,7 +115,6 @@ func NewClient(cfg *restclient.Config) (Client, error) {
 }
 
 // Generic Resource CRUD operations
-
 func (c *client) createResource(obj interface{}, namespace string, resource schema.GroupVersionResource) error {
 	resultMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
 	if err != nil {
@@ -90,7 +124,7 @@ func (c *client) createResource(obj interface{}, namespace string, resource sche
 	}
 	input := unstructured.Unstructured{}
 	input.SetUnstructuredContent(resultMap)
-	resp, err := c.dynamicClient.Resource(resource).Namespace(namespace).Create(context.Background(), &input, meta_v1.CreateOptions{})
+	resp, err := c.dynamicClient.Resource(resource).Namespace(namespace).Create(context.Background(), &input, metav1.CreateOptions{})
 	if err != nil {
 		msg := fmt.Sprintf("Failed to create %s, with error: %v", resource.Resource, err)
 		log.Printf("[Error] %s", msg)
