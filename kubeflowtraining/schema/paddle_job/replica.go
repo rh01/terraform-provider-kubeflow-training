@@ -1,4 +1,4 @@
-package pytorchjob
+package paddle_job
 
 import (
 	// "github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/k8s"
@@ -15,14 +15,14 @@ import (
 //	  "Master": PyTorchReplicaSpec,
 //	  "Worker": PyTorchReplicaSpec,
 //	}
-func pytorchJobReplicaSpecFields() map[string]*schema.Schema {
+func paddleJobReplicaSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"master": pytorchJobReplicaSpecSchema(),
-		"worker": pytorchJobReplicaSpecSchema(),
+		"master": paddleJobReplicaSpecSchema(),
+		"worker": paddleJobReplicaSpecSchema(),
 	}
 }
 
-func pytorchJobReplicaSpecTemplateFields() map[string]*schema.Schema {
+func paddleJobReplicaSpecTemplateFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"replicas": &schema.Schema{
 			Type:     schema.TypeInt,
@@ -45,17 +45,17 @@ func pytorchJobReplicaSpecTemplateFields() map[string]*schema.Schema {
 	}
 }
 
-func pytorchJobReplicaSpecSchema() *schema.Schema {
+func paddleJobReplicaSpecSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 		Elem: &schema.Resource{
-			Schema: pytorchJobReplicaSpecTemplateFields(),
+			Schema: paddleJobReplicaSpecTemplateFields(),
 		},
 		Optional: true,
 	}
 }
 
-func expandPytorchJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
+func expandPaddleJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
@@ -75,7 +75,7 @@ func expandPytorchJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error)
 	}, nil
 }
 
-func flattenPytorchJobReplicaSpec(in *commonv1.ReplicaSpec) ([]interface{}, error) {
+func flattenPaddleJobReplicaSpec(in *commonv1.ReplicaSpec) ([]interface{}, error) {
 	if in == nil {
 		return []interface{}{nil}, nil
 	}

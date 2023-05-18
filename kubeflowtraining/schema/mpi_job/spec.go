@@ -1,4 +1,4 @@
-package pytorchjob
+package mpi_job
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 )
 
-func pytorchJobSpecFields() map[string]*schema.Schema {
+func mpiJobSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"run_policy": {
 			Type:        schema.TypeString,
@@ -33,14 +33,14 @@ func pytorchJobSpecFields() map[string]*schema.Schema {
 			Description: "A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.",
 			Optional:    true,
 			Elem: &schema.Resource{
-				Schema: pytorchJobReplicaSpecFields(),
+				Schema: mpiJobReplicaSpecFields(),
 			},
 		},
 	}
 }
 
-func pytorchJobSpecSchema() *schema.Schema {
-	fields := pytorchJobSpecFields()
+func mpiJobSpecSchema() *schema.Schema {
+	fields := mpiJobSpecFields()
 
 	return &schema.Schema{
 		Type: schema.TypeList,
@@ -55,34 +55,18 @@ func pytorchJobSpecSchema() *schema.Schema {
 
 }
 
-func expandPyTorchJobSpec(pytorchJob []interface{}) (kubeflowv1.PyTorchJobSpec, error) {
-	result := kubeflowv1.PyTorchJobSpec{}
+func expandMPIJobSpec(mpiJob []interface{}) (kubeflowv1.MPIJobSpec, error) {
+	result := kubeflowv1.MPIJobSpec{}
 
-	if len(pytorchJob) == 0 || pytorchJob[0] == nil {
+	if len(mpiJob) == 0 || mpiJob[0] == nil {
 		return result, nil
-	}
-
-	in := pytorchJob[0].(map[string]interface{})
-	if v, ok := in["elastic_policy"]; ok {
-		result.ElasticPolicy, _ = expandElasticPolicy(v.([]interface{}))
 	}
 
 	return result, nil
 }
 
-func flattenPytorchJobSpec(in kubeflowv1.PyTorchJobSpec) []interface{} {
+func flattenMPIJobSpec(in kubeflowv1.MPIJobSpec) []interface{} {
 	att := make(map[string]interface{})
-
-	// if in.Running != nil {
-	// 	att["running"] = strconv.FormatBool(*in.Running)
-	// }
-	if in.ElasticPolicy != nil {
-		att["elastic_policy"] = flattenElasticPolicy(in.ElasticPolicy)
-	}
-	// if in.Template != nil {
-	// 	att["template"] = virtualmachineinstance.FlattenVirtualMachineInstanceTemplateSpec(*in.Template)
-	// }
-	// att["data_volume_templates"] = datavolume.FlattenDataVolumeTemplates(in.DataVolumeTemplates)
 
 	return []interface{}{att}
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/client"
-	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/pytorchjob"
+	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/pytorch_job"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils/patch"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -29,14 +29,14 @@ func resourceKubeFlowPytorchJob() *schema.Resource {
 			Create: schema.DefaultTimeout(40 * time.Minute),
 			Delete: schema.DefaultTimeout(5 * time.Minute),
 		},
-		Schema: pytorchjob.PytorchJobFields(),
+		Schema: pytorch_job.PyTorchJobFields(),
 	}
 }
 
 func resourceKubeFlowPytorchJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := pytorchjob.FromResourceData(resourceData)
+	dv, err := pytorch_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func resourceKubeFlowPytorchJobCreate(resourceData *schema.ResourceData, meta in
 		return err
 	}
 	log.Printf("[INFO] Submitted new data volume: %#v", dv)
-	if err := pytorchjob.ToResourceData(*dv, resourceData); err != nil {
+	if err := pytorch_job.ToResourceData(*dv, resourceData); err != nil {
 		return err
 	}
 	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
@@ -85,7 +85,7 @@ func resourceKubeFlowPytorchJobCreate(resourceData *schema.ResourceData, meta in
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return pytorchjob.ToResourceData(*dv, resourceData)
+	return pytorch_job.ToResourceData(*dv, resourceData)
 }
 
 func resourceKubeFlowPytorchJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -105,7 +105,7 @@ func resourceKubeFlowPytorchJobRead(resourceData *schema.ResourceData, meta inte
 	}
 	log.Printf("[INFO] Received data volume: %#v", dv)
 
-	return pytorchjob.ToResourceData(*dv, resourceData)
+	return pytorch_job.ToResourceData(*dv, resourceData)
 }
 
 func resourceKubeFlowPytorchJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -116,7 +116,7 @@ func resourceKubeFlowPytorchJobUpdate(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	ops := pytorchjob.AppendPatchOps("", "", resourceData, []patch.PatchOperation{})
+	ops := pytorch_job.AppendPatchOps("", "", resourceData, []patch.PatchOperation{})
 	data, err := ops.MarshalJSON()
 	if err != nil {
 		return fmt.Errorf("Failed to marshal update operations: %s", err)

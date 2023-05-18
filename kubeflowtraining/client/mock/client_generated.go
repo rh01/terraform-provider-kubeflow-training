@@ -5,49 +5,206 @@
 package mock
 
 import (
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	v1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
-	reflect "reflect"
 )
 
-// MockClient is a mock of Client interface
+// MockClient is a mock of Client interface.
 type MockClient struct {
 	ctrl     *gomock.Controller
 	recorder *MockClientMockRecorder
 }
 
-// MockClientMockRecorder is the mock recorder for MockClient
+// MockClientMockRecorder is the mock recorder for MockClient.
 type MockClientMockRecorder struct {
 	mock *MockClient
 }
 
-// NewMockClient creates a new mock instance
+// NewMockClient creates a new mock instance.
 func NewMockClient(ctrl *gomock.Controller) *MockClient {
 	mock := &MockClient{ctrl: ctrl}
 	mock.recorder = &MockClientMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
 }
 
-// CreatePytorchJob mocks base method
-func (m *MockClient) CreatePytorchJob(vm *v1.PyTorchJob) error {
+// CreateMPIJob mocks base method.
+func (m *MockClient) CreateMPIJob(job *v1.MPIJob) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePytorchJob", vm)
+	ret := m.ctrl.Call(m, "CreateMPIJob", job)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreatePytorchJob indicates an expected call of CreatePytorchJob
-func (mr *MockClientMockRecorder) CreatePytorchJob(vm interface{}) *gomock.Call {
+// CreateMPIJob indicates an expected call of CreateMPIJob.
+func (mr *MockClientMockRecorder) CreateMPIJob(job interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePytorchJob", reflect.TypeOf((*MockClient)(nil).CreatePytorchJob), vm)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMPIJob", reflect.TypeOf((*MockClient)(nil).CreateMPIJob), job)
 }
 
-// GetPytorchJob mocks base method
+// CreatePaddleJob mocks base method.
+func (m *MockClient) CreatePaddleJob(job *v1.PaddleJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePaddleJob", job)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreatePaddleJob indicates an expected call of CreatePaddleJob.
+func (mr *MockClientMockRecorder) CreatePaddleJob(job interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePaddleJob", reflect.TypeOf((*MockClient)(nil).CreatePaddleJob), job)
+}
+
+// CreatePytorchJob mocks base method.
+func (m *MockClient) CreatePytorchJob(job *v1.PyTorchJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePytorchJob", job)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreatePytorchJob indicates an expected call of CreatePytorchJob.
+func (mr *MockClientMockRecorder) CreatePytorchJob(job interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePytorchJob", reflect.TypeOf((*MockClient)(nil).CreatePytorchJob), job)
+}
+
+// CreateTFJob mocks base method.
+func (m *MockClient) CreateTFJob(job *v1.TFJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTFJob", job)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateTFJob indicates an expected call of CreateTFJob.
+func (mr *MockClientMockRecorder) CreateTFJob(job interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTFJob", reflect.TypeOf((*MockClient)(nil).CreateTFJob), job)
+}
+
+// CreateXGBoostJob mocks base method.
+func (m *MockClient) CreateXGBoostJob(job *v1.XGBoostJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateXGBoostJob", job)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateXGBoostJob indicates an expected call of CreateXGBoostJob.
+func (mr *MockClientMockRecorder) CreateXGBoostJob(job interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateXGBoostJob", reflect.TypeOf((*MockClient)(nil).CreateXGBoostJob), job)
+}
+
+// DeleteMPIJob mocks base method.
+func (m *MockClient) DeleteMPIJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteMPIJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteMPIJob indicates an expected call of DeleteMPIJob.
+func (mr *MockClientMockRecorder) DeleteMPIJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteMPIJob", reflect.TypeOf((*MockClient)(nil).DeleteMPIJob), namespace, name)
+}
+
+// DeletePaddleJob mocks base method.
+func (m *MockClient) DeletePaddleJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePaddleJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePaddleJob indicates an expected call of DeletePaddleJob.
+func (mr *MockClientMockRecorder) DeletePaddleJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePaddleJob", reflect.TypeOf((*MockClient)(nil).DeletePaddleJob), namespace, name)
+}
+
+// DeletePytorchJob mocks base method.
+func (m *MockClient) DeletePytorchJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePytorchJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePytorchJob indicates an expected call of DeletePytorchJob.
+func (mr *MockClientMockRecorder) DeletePytorchJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePytorchJob", reflect.TypeOf((*MockClient)(nil).DeletePytorchJob), namespace, name)
+}
+
+// DeleteTFJob mocks base method.
+func (m *MockClient) DeleteTFJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTFJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTFJob indicates an expected call of DeleteTFJob.
+func (mr *MockClientMockRecorder) DeleteTFJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTFJob", reflect.TypeOf((*MockClient)(nil).DeleteTFJob), namespace, name)
+}
+
+// DeleteXGBoostJob mocks base method.
+func (m *MockClient) DeleteXGBoostJob(namespace, name string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteXGBoostJob", namespace, name)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteXGBoostJob indicates an expected call of DeleteXGBoostJob.
+func (mr *MockClientMockRecorder) DeleteXGBoostJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteXGBoostJob", reflect.TypeOf((*MockClient)(nil).DeleteXGBoostJob), namespace, name)
+}
+
+// GetMPIJob mocks base method.
+func (m *MockClient) GetMPIJob(namespace, name string) (*v1.MPIJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMPIJob", namespace, name)
+	ret0, _ := ret[0].(*v1.MPIJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMPIJob indicates an expected call of GetMPIJob.
+func (mr *MockClientMockRecorder) GetMPIJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMPIJob", reflect.TypeOf((*MockClient)(nil).GetMPIJob), namespace, name)
+}
+
+// GetPaddleJob mocks base method.
+func (m *MockClient) GetPaddleJob(namespace, name string) (*v1.PaddleJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPaddleJob", namespace, name)
+	ret0, _ := ret[0].(*v1.PaddleJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPaddleJob indicates an expected call of GetPaddleJob.
+func (mr *MockClientMockRecorder) GetPaddleJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPaddleJob", reflect.TypeOf((*MockClient)(nil).GetPaddleJob), namespace, name)
+}
+
+// GetPytorchJob mocks base method.
 func (m *MockClient) GetPytorchJob(namespace, name string) (*v1.PyTorchJob, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPytorchJob", namespace, name)
@@ -56,36 +213,108 @@ func (m *MockClient) GetPytorchJob(namespace, name string) (*v1.PyTorchJob, erro
 	return ret0, ret1
 }
 
-// GetPytorchJob indicates an expected call of GetPytorchJob
+// GetPytorchJob indicates an expected call of GetPytorchJob.
 func (mr *MockClientMockRecorder) GetPytorchJob(namespace, name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPytorchJob", reflect.TypeOf((*MockClient)(nil).GetPytorchJob), namespace, name)
 }
 
-// UpdatePytorchJob mocks base method
-func (m *MockClient) UpdatePytorchJob(namespace, name string, vm *v1.PyTorchJob, data []byte) error {
+// GetTFJob mocks base method.
+func (m *MockClient) GetTFJob(namespace, name string) (*v1.TFJob, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdatePytorchJob", namespace, name, vm, data)
+	ret := m.ctrl.Call(m, "GetTFJob", namespace, name)
+	ret0, _ := ret[0].(*v1.TFJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTFJob indicates an expected call of GetTFJob.
+func (mr *MockClientMockRecorder) GetTFJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTFJob", reflect.TypeOf((*MockClient)(nil).GetTFJob), namespace, name)
+}
+
+// GetXGBoostJob mocks base method.
+func (m *MockClient) GetXGBoostJob(namespace, name string) (*v1.XGBoostJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetXGBoostJob", namespace, name)
+	ret0, _ := ret[0].(*v1.XGBoostJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetXGBoostJob indicates an expected call of GetXGBoostJob.
+func (mr *MockClientMockRecorder) GetXGBoostJob(namespace, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetXGBoostJob", reflect.TypeOf((*MockClient)(nil).GetXGBoostJob), namespace, name)
+}
+
+// UpdateMPIJob mocks base method.
+func (m *MockClient) UpdateMPIJob(namespace, name string, job *v1.MPIJob, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMPIJob", namespace, name, job, data)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdatePytorchJob indicates an expected call of UpdatePytorchJob
-func (mr *MockClientMockRecorder) UpdatePytorchJob(namespace, name, vm, data interface{}) *gomock.Call {
+// UpdateMPIJob indicates an expected call of UpdateMPIJob.
+func (mr *MockClientMockRecorder) UpdateMPIJob(namespace, name, job, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePytorchJob", reflect.TypeOf((*MockClient)(nil).UpdatePytorchJob), namespace, name, vm, data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMPIJob", reflect.TypeOf((*MockClient)(nil).UpdateMPIJob), namespace, name, job, data)
 }
 
-// DeletePytorchJob mocks base method
-func (m *MockClient) DeletePytorchJob(namespace, name string) error {
+// UpdatePaddleJob mocks base method.
+func (m *MockClient) UpdatePaddleJob(namespace, name string, job *v1.PaddleJob, data []byte) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeletePytorchJob", namespace, name)
+	ret := m.ctrl.Call(m, "UpdatePaddleJob", namespace, name, job, data)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeletePytorchJob indicates an expected call of DeletePytorchJob
-func (mr *MockClientMockRecorder) DeletePytorchJob(namespace, name interface{}) *gomock.Call {
+// UpdatePaddleJob indicates an expected call of UpdatePaddleJob.
+func (mr *MockClientMockRecorder) UpdatePaddleJob(namespace, name, job, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePytorchJob", reflect.TypeOf((*MockClient)(nil).DeletePytorchJob), namespace, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePaddleJob", reflect.TypeOf((*MockClient)(nil).UpdatePaddleJob), namespace, name, job, data)
+}
+
+// UpdatePytorchJob mocks base method.
+func (m *MockClient) UpdatePytorchJob(namespace, name string, job *v1.PyTorchJob, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePytorchJob", namespace, name, job, data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePytorchJob indicates an expected call of UpdatePytorchJob.
+func (mr *MockClientMockRecorder) UpdatePytorchJob(namespace, name, job, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePytorchJob", reflect.TypeOf((*MockClient)(nil).UpdatePytorchJob), namespace, name, job, data)
+}
+
+// UpdateTFJob mocks base method.
+func (m *MockClient) UpdateTFJob(namespace, name string, job *v1.TFJob, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTFJob", namespace, name, job, data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTFJob indicates an expected call of UpdateTFJob.
+func (mr *MockClientMockRecorder) UpdateTFJob(namespace, name, job, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTFJob", reflect.TypeOf((*MockClient)(nil).UpdateTFJob), namespace, name, job, data)
+}
+
+// UpdateXGBoostJob mocks base method.
+func (m *MockClient) UpdateXGBoostJob(namespace, name string, job *v1.XGBoostJob, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateXGBoostJob", namespace, name, job, data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateXGBoostJob indicates an expected call of UpdateXGBoostJob.
+func (mr *MockClientMockRecorder) UpdateXGBoostJob(namespace, name, job, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateXGBoostJob", reflect.TypeOf((*MockClient)(nil).UpdateXGBoostJob), namespace, name, job, data)
 }

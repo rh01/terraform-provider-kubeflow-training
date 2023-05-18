@@ -1,4 +1,4 @@
-package pytorchjob
+package paddle_job
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 )
 
-func pytorchJobConditionsFields() map[string]*schema.Schema {
+func paddleJobConditionsFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"type": {
 			Type:        schema.TypeString,
@@ -45,8 +45,8 @@ func pytorchJobConditionsFields() map[string]*schema.Schema {
 	}
 }
 
-func pytorchJobConditionsSchema() *schema.Schema {
-	fields := pytorchJobConditionsFields()
+func paddleJobConditionsSchema() *schema.Schema {
+	fields := paddleJobConditionsFields()
 
 	return &schema.Schema{
 		Type: schema.TypeList,
@@ -60,7 +60,7 @@ func pytorchJobConditionsSchema() *schema.Schema {
 
 }
 
-func expandPyTorchJobConditions(conditions []interface{}) ([]commonv1.JobCondition, error) {
+func expandPaddleJobConditions(conditions []interface{}) ([]commonv1.JobCondition, error) {
 	result := make([]commonv1.JobCondition, len(conditions))
 
 	if len(conditions) == 0 || conditions[0] == nil {
@@ -75,7 +75,7 @@ func expandPyTorchJobConditions(conditions []interface{}) ([]commonv1.JobConditi
 	return result, nil
 }
 
-func flattenPyTorchJobConditions(in []commonv1.JobCondition) []interface{} {
+func flattenPaddleJobConditions(in []commonv1.JobCondition) []interface{} {
 	att := make([]interface{}, len(in))
 
 	for i, v := range in {

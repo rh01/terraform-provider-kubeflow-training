@@ -1,4 +1,4 @@
-package pytorchjob
+package xgboost_job
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 )
 
-func pytorchJobStatusFields() map[string]*schema.Schema {
+func xgboostJobStatusFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"created": &schema.Schema{
 			Type:        schema.TypeBool,
@@ -20,12 +20,12 @@ func pytorchJobStatusFields() map[string]*schema.Schema {
 			Description: "Ready indicates if the virtual machine is running and ready.",
 			Optional:    true,
 		},
-		"conditions": pytorchJobConditionsSchema(),
+		"conditions": xgboostJobConditionsSchema(),
 	}
 }
 
-func pytorchJobStatusSchema() *schema.Schema {
-	fields := pytorchJobStatusFields()
+func xgboostJobStatusSchema() *schema.Schema {
+	fields := xgboostJobStatusFields()
 
 	return &schema.Schema{
 		Type: schema.TypeList,
@@ -40,14 +40,14 @@ func pytorchJobStatusSchema() *schema.Schema {
 
 }
 
-func expandPytorchJobStatus(pytorchJobStatus []interface{}) (commonv1.JobStatus, error) {
+func expandXGBoostJobStatus(xgboostJobStatus []interface{}) (commonv1.JobStatus, error) {
 	result := commonv1.JobStatus{}
 
-	if len(pytorchJobStatus) == 0 || pytorchJobStatus[0] == nil {
+	if len(xgboostJobStatus) == 0 || xgboostJobStatus[0] == nil {
 		return result, nil
 	}
 
-	// in := pytorchJobStatus[0].(map[string]interface{})
+	// in := xgboostJobStatus[0].(map[string]interface{})
 
 	// if v, ok := in["created"].(bool); ok {
 	// 	result.Created = v

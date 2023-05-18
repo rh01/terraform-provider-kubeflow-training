@@ -1,4 +1,4 @@
-package pytorchjob
+package xgboost_job
 
 import (
 	"fmt"
@@ -179,6 +179,3 @@ func flattenElasticPolicy(elasticPolicy *kubeflowv1.ElasticPolicy) interface{} {
 	}
 	return elasticPolicyMap
 }
-
-
-

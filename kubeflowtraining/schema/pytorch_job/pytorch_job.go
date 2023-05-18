@@ -1,4 +1,4 @@
-package pytorchjob
+package pytorch_job
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -7,22 +7,22 @@ import (
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils/patch"
 )
 
-func PytorchJobFields() map[string]*schema.Schema {
+func PyTorchJobFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"metadata": kubernetes.NamespacedMetadataSchema("PytorchJob", false),
-		"spec":     pytorchJobSpecSchema(),
-		"status":   pytorchJobStatusSchema(),
+		"metadata": kubernetes.NamespacedMetadataSchema("PyTorchJob", false),
+		"spec":     pyTorchJobSpecSchema(),
+		"status":   pyTorchJobStatusSchema(),
 	}
 }
 
-func ExpandPytorchJob(pytorchJobs []interface{}) (*kubeflowv1.PyTorchJob, error) {
+func ExpandPyTorchJob(pyTorchJobs []interface{}) (*kubeflowv1.PyTorchJob, error) {
 	result := &kubeflowv1.PyTorchJob{}
 
-	if len(pytorchJobs) == 0 || pytorchJobs[0] == nil {
+	if len(pyTorchJobs) == 0 || pyTorchJobs[0] == nil {
 		return result, nil
 	}
 
-	in := pytorchJobs[0].(map[string]interface{})
+	in := pyTorchJobs[0].(map[string]interface{})
 
 	if v, ok := in["metadata"].([]interface{}); ok {
 		result.ObjectMeta = kubernetes.ExpandMetadata(v)
@@ -35,7 +35,7 @@ func ExpandPytorchJob(pytorchJobs []interface{}) (*kubeflowv1.PyTorchJob, error)
 		result.Spec = spec
 	}
 	if v, ok := in["status"].([]interface{}); ok {
-		status, err := expandPytorchJobStatus(v)
+		status, err := expandPyTorchJobStatus(v)
 		if err != nil {
 			return result, err
 		}
@@ -45,11 +45,11 @@ func ExpandPytorchJob(pytorchJobs []interface{}) (*kubeflowv1.PyTorchJob, error)
 	return result, nil
 }
 
-func FlattenPytorchJob(in kubeflowv1.PyTorchJob) []interface{} {
+func FlattenPyTorchJob(in kubeflowv1.PyTorchJob) []interface{} {
 	att := make(map[string]interface{})
 
 	att["metadata"] = kubernetes.FlattenMetadata(in.ObjectMeta)
-	att["spec"] = flattenPytorchJobSpec(in.Spec)
+	att["spec"] = flattenPyTorchJobSpec(in.Spec)
 	att["status"] = flattenVirtualMachineStatus(in.Status)
 
 	return []interface{}{att}
@@ -64,7 +64,7 @@ func FromResourceData(resourceData *schema.ResourceData) (*kubeflowv1.PyTorchJob
 		return result, err
 	}
 	result.Spec = spec
-	status, err := expandPytorchJobStatus(resourceData.Get("status").([]interface{}))
+	status, err := expandPyTorchJobStatus(resourceData.Get("status").([]interface{}))
 	if err != nil {
 		return result, err
 	}
@@ -77,7 +77,7 @@ func ToResourceData(vm kubeflowv1.PyTorchJob, resourceData *schema.ResourceData)
 	if err := resourceData.Set("metadata", kubernetes.FlattenMetadata(vm.ObjectMeta)); err != nil {
 		return err
 	}
-	if err := resourceData.Set("spec", flattenPytorchJobSpec(vm.Spec)); err != nil {
+	if err := resourceData.Set("spec", flattenPyTorchJobSpec(vm.Spec)); err != nil {
 		return err
 	}
 	if err := resourceData.Set("status", flattenVirtualMachineStatus(vm.Status)); err != nil {
