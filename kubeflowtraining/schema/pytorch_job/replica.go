@@ -55,7 +55,24 @@ func pyTorchJobReplicaSpecSchema() *schema.Schema {
 	}
 }
 
-func expandPyTorchJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
+func expandPyTorchJobReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*commonv1.ReplicaSpec, error) {
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+
+	m := make(map[commonv1.ReplicaType]*commonv1.ReplicaSpec)
+	for k, v := range l[0].(map[string]interface{}) {
+		replicaType := commonv1.ReplicaType(k)
+		replicaSpec, err := expandReplicaSpec(v.([]interface{}))
+		if err != nil {
+			return nil, err
+		}
+		m[replicaType] = replicaSpec
+	}
+	return m, nil
+}
+
+func expandReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
@@ -75,7 +92,7 @@ func expandPyTorchJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error)
 	}, nil
 }
 
-func flattenPyTorchJobReplicaSpec(in *commonv1.ReplicaSpec) ([]interface{}, error) {
+func flattenReplicaSpec(in *commonv1.ReplicaSpec) ([]interface{}, error) {
 	if in == nil {
 		return []interface{}{nil}, nil
 	}
@@ -92,4 +109,21 @@ func flattenPyTorchJobReplicaSpec(in *commonv1.ReplicaSpec) ([]interface{}, erro
 		"template":       template,
 		"restart_policy": restartPolicy,
 	}}, nil
+}
+
+func flattenPyTorchJobReplicaSpec(in map[commonv1.ReplicaType]*commonv1.ReplicaSpec) ([]interface{}, error) {
+	if in == nil {
+		return []interface{}{nil}, nil
+	}
+
+	m := make(map[string]interface{})
+	for k, v := range in {
+		replicaType := string(k)
+		replicaSpec, err := flattenReplicaSpec(v)
+		if err != nil {
+			return nil, err
+		}
+		m[replicaType] = replicaSpec
+	}
+	return []interface{}{m}, nil
 }

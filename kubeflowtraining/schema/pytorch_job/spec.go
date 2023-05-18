@@ -4,21 +4,13 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 )
 
 func pyTorchJobSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"run_policy": {
-			Type:        schema.TypeString,
-			Description: "RunPolicy encapsulates various runtime policies of the distributed training job, for example how to clean up resources and how long the job can stay active.",
-			Optional:    true,
-			ValidateFunc: validation.StringInSlice([]string{
-				"AutoDelete",
-				"LongRunning",
-			}, false),
-		},
+		"run_policy": {},
 		"elastic_policy": {
 			Type:        schema.TypeList,
 			Description: "ElasticPolicy is a policy for elastic distributed training.",
@@ -45,7 +37,7 @@ func pyTorchJobSpecSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("VirtualMachineSpec describes how the proper VirtualMachine should look like."),
+		Description: fmt.Sprintf("PyTorchJobSpec describes how the proper VirtualMachine should look like."),
 		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
@@ -63,8 +55,17 @@ func expandPyTorchJobSpec(pyTorchJob []interface{}) (kubeflowv1.PyTorchJobSpec, 
 	}
 
 	in := pyTorchJob[0].(map[string]interface{})
+	if v, ok := in["run_policy"]; ok {
+		rp, _ := expandRunPolicy(v)
+		result.RunPolicy = *rp
+	}
+
 	if v, ok := in["elastic_policy"]; ok {
 		result.ElasticPolicy, _ = expandElasticPolicy(v.([]interface{}))
+	}
+
+	if v, ok := in["pytorch_replica_specs"]; ok {
+		result.PyTorchReplicaSpecs, _ = expandPyTorchJobReplicaSpec(v.([]interface{}))
 	}
 
 	return result, nil
@@ -73,16 +74,15 @@ func expandPyTorchJobSpec(pyTorchJob []interface{}) (kubeflowv1.PyTorchJobSpec, 
 func flattenPyTorchJobSpec(in kubeflowv1.PyTorchJobSpec) []interface{} {
 	att := make(map[string]interface{})
 
-	// if in.Running != nil {
-	// 	att["running"] = strconv.FormatBool(*in.Running)
-	// }
+	att["run_policy"] = flattenRunPolicy(&in.RunPolicy)
+
 	if in.ElasticPolicy != nil {
 		att["elastic_policy"] = flattenElasticPolicy(in.ElasticPolicy)
 	}
-	// if in.Template != nil {
-	// 	att["template"] = virtualmachineinstance.FlattenVirtualMachineInstanceTemplateSpec(*in.Template)
-	// }
-	// att["data_volume_templates"] = datavolume.FlattenDataVolumeTemplates(in.DataVolumeTemplates)
+
+	if in.PyTorchReplicaSpecs != nil {
+		att["pytorch_replica_specs"], _ = flattenPyTorchJobReplicaSpec(in.PyTorchReplicaSpecs)
+	}
 
 	return []interface{}{att}
 }
