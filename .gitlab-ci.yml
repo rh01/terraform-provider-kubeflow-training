@@ -1,0 +1,152 @@
+image: golang:alpine
+
+stages:
+  - test
+  - build
+  - preReleaseTest
+  - release
+
+variables:
+  GOCACHE: $CI_PROJECT_DIR/.tmp/go-cache
+  CPHALO_TEST_ID: ${CI_COMMIT_SHORT_SHA}_${CI_JOB_ID}
+  CGO_ENABLED: "0"
+
+cache:
+  key: $CI_PROJECT_PATH_SLUG
+  paths:
+    - $GOCACHE
+
+.install-deps: &install-deps
+  before_script:
+    - apk add --update zip make git bzr
+
+.tf-image: &tf-image
+  image:
+    name: hashicorp/terraform:0.12.3
+    entrypoint:
+      - ''
+
+lint:
+  stage: test
+  image: golangci/golangci-lint:v1.15
+  allow_failure: true
+  except:
+    - tags
+    - schedules
+  script:
+    - go mod download
+    - make lint
+
+tf_fmt:
+  <<: *tf-image
+  stage: test
+  cache: {}
+  except:
+    - tags
+    - schedules
+  script:
+    - terraform fmt --recursive -check -diff cphalo/testdata
+    - terraform fmt --recursive -check -diff examples/
+
+website:
+  stage: build
+  image: monachus/hugo
+  cache: {}
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  except:
+    - schedules
+  artifacts:
+    paths:
+      - website/public
+    expire_in: 1 hour
+  before_script:
+    - apt-get update
+    - apt-get install make
+  script:
+    - sed -i -e "s/v0.0.0-master/${CI_COMMIT_TAG:-v0.0.0}/g" website/content/_index.md
+    - make website-build
+
+tests_acc:
+  <<: *install-deps
+  stage: test
+  except:
+    - tags
+  script:
+    - make testacc
+
+build:
+  <<: *install-deps
+  stage: build
+  except:
+    - schedules
+  script:
+    - export RELEASE_VERSION=${CI_COMMIT_TAG:-"v0.0.0-${CI_COMMIT_REF_SLUG}"}
+    - echo "Building version ${RELEASE_VERSION}"
+    - make release VERSION=${RELEASE_VERSION}
+  artifacts:
+    paths:
+      - bin/release
+    expire_in: 1 hour
+
+examples_test:
+  <<: *tf-image
+  stage: preReleaseTest
+  cache: {}
+  except:
+    - schedules
+  only:
+    refs:
+      - master
+  before_script:
+    - apk add --update zip
+    - terraform version
+  script:
+    - export RELEASE_VERSION=${CI_COMMIT_TAG:-"v0.0.0-${CI_COMMIT_REF_SLUG}"}
+    - echo "Testing version ${RELEASE_VERSION}"
+    - cd ${CI_PROJECT_DIR}/bin/release/${RELEASE_VERSION}
+    - sha256sum -c terraform-provider-cphalo_${RELEASE_VERSION}_linux_amd64.sha256
+    - mkdir -p ~/.terraform.d/plugins
+    - unzip terraform-provider-cphalo_${RELEASE_VERSION}_linux_amd64.zip
+    - mv terraform-provider-cphalo_${RELEASE_VERSION} ~/.terraform.d/plugins
+    - rm terraform-provider-cphalo_${RELEASE_VERSION}_linux_amd64.zip readme.md terraform-provider-cphalo_${RELEASE_VERSION}_linux_amd64.sha256
+    - cd ${CI_PROJECT_DIR}/examples/basic
+    - terraform init
+    - terraform apply -auto-approve
+    - terraform plan -detailed-exitcode
+  after_script:
+    - cd ${CI_PROJECT_DIR}/examples/basic
+    - terraform destroy -auto-approve
+
+copy_to_s3:
+  stage: release
+  image: kiwicom/s3cmd
+  cache: {}
+  except:
+    - schedules
+  script:
+    - '[ -n "$CI_COMMIT_TAG" ] && export DIR="Releases/"'
+    - s3cmd sync
+      --no-preserve
+      --no-mime-magic
+      --guess-mime-type
+      --recursive
+      --default-mime-type="application/zip"
+      bin/release/* s3://kw-terraform-providers/cphalo/${DIR}
+
+pages:
+  stage: release
+  cache: {}
+  dependencies:
+    - website
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - mv website/public public
+  artifacts:
+    paths:
+      - public
+  except:
+    - schedules
+  only:
+    - tags
