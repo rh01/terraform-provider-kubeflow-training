@@ -34,7 +34,7 @@ lint:
     - tags
     - schedules
   script:
-    - go mod download
+    # - go mod download
     - make lint
 
 # tf_fmt:
