@@ -47,15 +47,13 @@ func pyTorchJobConditionsFields() map[string]*schema.Schema {
 }
 
 func pyTorchJobConditionsSchema() *schema.Schema {
-	fields := pyTorchJobConditionsFields()
-
 	return &schema.Schema{
 		Type: schema.TypeList,
 
 		Description: fmt.Sprintf("Hold the state information of the PyTorchJob and its PyTorchJobInstance."),
 		Required:    true,
 		Elem: &schema.Resource{
-			Schema: fields,
+			Schema: pyTorchJobConditionsFields(),
 		},
 	}
 
