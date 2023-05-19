@@ -17,3 +17,5 @@
 *tfstate*
 crash.log
 coverage.out
+
+.DS_Store
