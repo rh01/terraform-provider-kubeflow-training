@@ -36,10 +36,10 @@ import (
 
 type Client interface {
 	// PyTorchJob CRUD operations
-	CreatePytorchJob(job *kubeflowv1.PyTorchJob) error
-	GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error)
-	UpdatePytorchJob(namespace string, name string, job *kubeflowv1.PyTorchJob, data []byte) error
-	DeletePytorchJob(namespace string, name string) error
+	CreatePyTorchJob(job *kubeflowv1.PyTorchJob) error
+	GetPyTorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error)
+	UpdatePyTorchJob(namespace string, name string, job *kubeflowv1.PyTorchJob, data []byte) error
+	DeletePyTorchJob(namespace string, name string) error
 
 	// generate TFJob, MPIJob, XGBoostJob, PaddleJob CRUD
 	CreateTFJob(job *kubeflowv1.TFJob) error
@@ -223,48 +223,48 @@ func (c *client) UpdateXGBoostJob(namespace string, name string, job *kubeflowv1
 	return c.updateResource(namespace, name, xgbjRes(), job, data)
 }
 
-// CreatePytorchJob implements Client
-func (c *client) CreatePytorchJob(ptj *kubeflowv1.PyTorchJob) error {
+// CreatePyTorchJob implements Client
+func (c *client) CreatePyTorchJob(ptj *kubeflowv1.PyTorchJob) error {
 	ptjUpdateTypeMeta(ptj)
 	return c.createResource(ptj, ptj.Namespace, ptjRes())
 }
 
-// DeletePytorchJob implements Client
-func (c *client) DeletePytorchJob(namespace string, name string) error {
+// DeletePyTorchJob implements Client
+func (c *client) DeletePyTorchJob(namespace string, name string) error {
 	return c.deleteResource(namespace, name, ptjRes())
 }
 
-// GetPytorchJob implements Client
-func (c *client) GetPytorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error) {
+// GetPyTorchJob implements Client
+func (c *client) GetPyTorchJob(namespace string, name string) (*kubeflowv1.PyTorchJob, error) {
 	var ptj kubeflowv1.PyTorchJob
 	resp, err := c.getResource(namespace, name, ptjRes())
 	if err != nil {
 		if errors.IsNotFound(err) {
-			log.Printf("[Warning] VirtualMachine %s not found (namespace=%s)", name, namespace)
+			log.Printf("[Warning] PyTorchJob %s not found (namespace=%s)", name, namespace)
 			return nil, err
 		}
-		msg := fmt.Sprintf("Failed to get VirtualMachine, with error: %v", err)
+		msg := fmt.Sprintf("Failed to get PyTorchJob, with error: %v", err)
 		log.Printf("[Error] %s", msg)
 		return nil, fmt.Errorf(msg)
 	}
 	unstructured := resp.UnstructuredContent()
 	if err := runtime.DefaultUnstructuredConverter.FromUnstructured(unstructured, &ptj); err != nil {
-		msg := fmt.Sprintf("Failed to translate unstructed to VirtualMachine, with error: %v", err)
+		msg := fmt.Sprintf("Failed to translate unstructed to PyTorchJob, with error: %v", err)
 		log.Printf("[Error] %s", msg)
 		return nil, fmt.Errorf(msg)
 	}
 	return &ptj, nil
 }
 
-// UpdatePytorchJob implements Client
-func (c *client) UpdatePytorchJob(namespace string, name string, job *kubeflowv1.PyTorchJob, data []byte) error {
+// UpdatePyTorchJob implements Client
+func (c *client) UpdatePyTorchJob(namespace string, name string, job *kubeflowv1.PyTorchJob, data []byte) error {
 	ptjUpdateTypeMeta(job)
 	return c.updateResource(namespace, name, ptjRes(), job, data)
 }
 
 func ptjUpdateTypeMeta(job *kubeflowv1.PyTorchJob) {
 	job.TypeMeta = metav1.TypeMeta{
-		Kind:       "PytorchJob",
+		Kind:       "PyTorchJob",
 		APIVersion: kubeflowv1.GroupVersion.String(),
 	}
 }

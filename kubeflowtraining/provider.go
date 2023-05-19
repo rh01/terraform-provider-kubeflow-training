@@ -103,7 +103,11 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"kubeflow_pytorch_job": resourceKubeFlowPytorchJob(),
+			"kubeflow_pytorch_job": resourceKubeFlowPyTorchJob(),
+			"kubeflow_mpi_job":     resourceKubeFlowMPIJob(),
+			"kubeflow_xgboost_job": resourceKubeFlowXGBoostJob(),
+			"kubeflow_paddle_job":  resourceKubeFlowPaddleJob(),
+			"kubeflow_tf_job":      resourceKubeFlowTFJob(),
 		},
 	}
 	p.ConfigureFunc = func(resourceData *schema.ResourceData) (interface{}, error) {
