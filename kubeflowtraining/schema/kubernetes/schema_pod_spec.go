@@ -33,6 +33,11 @@ func podSpecFields(isUpdatable, isDeprecated, isComputed bool) map[string]*schem
 			Optional:    true,
 			Description: "AutomountServiceAccountToken indicates whether a service account token should be automatically mounted.",
 		},
+		"scheduler_name": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "If specified, the pod will be dispatched by specified scheduler. If not specified, the pod will be dispatched by default scheduler.",
+		},
 		"container": {
 			Type:        schema.TypeList,
 			Optional:    true,

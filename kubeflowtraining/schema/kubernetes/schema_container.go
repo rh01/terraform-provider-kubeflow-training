@@ -92,6 +92,33 @@ func handlerFields() map[string]*schema.Schema {
 	}
 }
 
+func resourcesFieldV1(isUpdatable bool) map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"limits": {
+			Type:        schema.TypeMap,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    !isUpdatable,
+			Description: "Describes the maximum amount of compute resources allowed. More info: http://kubernetes.io/docs/user-guide/compute-resources/",
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			DiffSuppressFunc: suppressEquivalentResourceQuantity,
+		},
+		"requests": {
+			Type:        schema.TypeMap,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    !isUpdatable,
+			Description: "Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			DiffSuppressFunc: suppressEquivalentResourceQuantity,
+		},
+	}
+}
+
 func resourcesField() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"limits": {
@@ -492,7 +519,7 @@ func containerFields(isUpdatable, isInitContainer bool) map[string]*schema.Schem
 			Computed:    true,
 			Description: "Compute Resources required by this container. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/persistent-volumes#resources",
 			Elem: &schema.Resource{
-				Schema: resourcesField(),
+				Schema: resourcesFieldV1(isUpdatable),
 			},
 		},
 		"security_context": {
@@ -683,3 +710,4 @@ func securityContextSchema() *schema.Resource {
 		Schema: m,
 	}
 }
+

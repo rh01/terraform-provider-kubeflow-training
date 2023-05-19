@@ -36,24 +36,24 @@ func resourceKubeFlowPyTorchJob() *schema.Resource {
 func resourceKubeFlowPyTorchJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := pytorch_job.FromResourceData(resourceData)
+	ptj, err := pytorch_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Creating new data volume: %#v", dv)
-	if err := cli.CreatePyTorchJob(dv); err != nil {
+	log.Printf("[INFO] Creating new data volume: %#v", ptj)
+	if err := cli.CreatePyTorchJob(ptj); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new data volume: %#v", dv)
-	if err := pytorch_job.ToResourceData(*dv, resourceData); err != nil {
+	log.Printf("[INFO] Submitted new data volume: %#v", ptj)
+	if err := pytorch_job.ToResourceData(*ptj, resourceData); err != nil {
 		return err
 	}
-	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
+	resourceData.SetId(utils.BuildId(ptj.ObjectMeta))
 
 	// Wait for data volume instance's status phase to be succeeded:
-	name := dv.ObjectMeta.Name
-	namespace := dv.ObjectMeta.Namespace
+	name := ptj.ObjectMeta.Name
+	namespace := ptj.ObjectMeta.Namespace
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Creating"},
@@ -61,31 +61,40 @@ func resourceKubeFlowPyTorchJobCreate(resourceData *schema.ResourceData, meta in
 		Timeout: resourceData.Timeout(schema.TimeoutCreate),
 		Refresh: func() (interface{}, string, error) {
 			var err error
-			dv, err = cli.GetPyTorchJob(namespace, name)
+			ptj, err = cli.GetPyTorchJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
-					log.Printf("[DEBUG] data volume %s is not created yet", name)
-					return dv, "Creating", nil
+					log.Printf("[DEBUG] PyTorchJob %s is not created yet", name)
+					return ptj, "Creating", nil
 				}
-				return dv, "", err
+				return ptj, "", err
 			}
 
+			if err = kubeflowv1.ValidateV1PyTorchJob(ptj); err != nil {
+				log.Printf("[DEBUG] PyTorchJob %s is not valid yet: %s", name, err)
+				return ptj, "Creating", nil
+			}
+
+			
+
+			// ptj.Status.ReplicaStatuses
+
 			// switch dv.Status.Phase {
-			// case cdiv1.Succeeded:
-			// 	return dv, "Succeeded", nil
-			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("data volume failed to be created, finished with phase=\"failed\"")
+			// // case cdiv1.Succeeded:
+			// // 	return dv, "Succeeded", nil
+			// // case cdiv1.Failed:
+			// // 	return dv, "", fmt.Errorf("data volume failed to be created, finished with phase=\"failed\"")
 			// }
 
-			log.Printf("[DEBUG] data volume %s is being created", name)
-			return dv, "Creating", nil
+			log.Printf("[DEBUG] PyTorchJob %s is being created", name)
+			return ptj, "Creating", nil
 		},
 	}
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return pytorch_job.ToResourceData(*dv, resourceData)
+	return pytorch_job.ToResourceData(*ptj, resourceData)
 }
 
 func resourceKubeFlowPyTorchJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -146,7 +155,7 @@ func resourceKubeFlowPyTorchJobDelete(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	// Wait for data volume instance to be removed:
+	// Wait for  instance to be removed:
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
