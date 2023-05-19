@@ -10,17 +10,51 @@ import (
 
 func mpiJobStatusFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"created": &schema.Schema{
-			Type:        schema.TypeBool,
-			Description: "Created indicates if the virtual machine is created in the cluster.",
+
+		"conditions":       mpiJobConditionsSchema(),
+		"replica_statuses": mpiJobReplicaStatusesSchema(),
+	}
+}
+
+func mpiJobReplicaStatusesSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:        schema.TypeList,
+		Description: fmt.Sprintf("ReplicaStatuses is map of ReplicaType and ReplicaStatus, specifies the status of each replica."),
+		Optional:    true,
+		MaxItems:    1,
+		Elem: &schema.Resource{
+			Schema: mpiJobReplicaStatusesFields(),
+		},
+	}
+}
+
+func mpiJobReplicaStatusesFields() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"active": &schema.Schema{
+			Type:        schema.TypeInt,
+			Description: fmt.Sprintf("The number of actively running pods."),
 			Optional:    true,
 		},
-		"ready": &schema.Schema{
-			Type:        schema.TypeBool,
-			Description: "Ready indicates if the virtual machine is running and ready.",
+		"succeeded": &schema.Schema{
+			Type:        schema.TypeInt,
+			Description: fmt.Sprintf("The number of pods which reached phase Succeeded."),
 			Optional:    true,
 		},
-		"conditions": mpiJobConditionsSchema(),
+		"failed": &schema.Schema{
+			Type:        schema.TypeInt,
+			Description: fmt.Sprintf("The number of pods which reached phase Failed."),
+			Optional:    true,
+		},
+		"label_selector": &schema.Schema{
+			Type:        schema.TypeString,
+			Description: fmt.Sprintf("Deprecated: Use Selector instead"),
+			Optional:    true,
+		},
+		"selector": &schema.Schema{
+			Type:        schema.TypeString,
+			Description: fmt.Sprintf("A Selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty Selector matches all objects. A null Selector matches no objects."),
+			Optional:    true,
+		},
 	}
 }
 
@@ -28,8 +62,7 @@ func mpiJobStatusSchema() *schema.Schema {
 	fields := mpiJobStatusFields()
 
 	return &schema.Schema{
-		Type: schema.TypeList,
-
+		Type:        schema.TypeList,
 		Description: fmt.Sprintf("VirtualMachineStatus represents the status returned by the controller to describe how the VirtualMachine is doing."),
 		Optional:    true,
 		MaxItems:    1,
@@ -47,24 +80,15 @@ func expandMPIJobStatus(mpiJobStatus []interface{}) (commonv1.JobStatus, error) 
 		return result, nil
 	}
 
-	// in := mpiJobStatus[0].(map[string]interface{})
+	in := mpiJobStatus[0].(map[string]interface{})
 
-	// if v, ok := in["created"].(bool); ok {
-	// 	result.Created = v
-	// }
-	// if v, ok := in["ready"].(bool); ok {
-	// 	result.Ready = v
-	// }
-	// if v, ok := in["conditions"].([]interface{}); ok {
-	// 	conditions, err := expandVirtualMachineConditions(v)
-	// 	if err != nil {
-	// 		return result, err
-	// 	}
-	// 	result.Conditions = conditions
-	// }
-	// if v, ok := in["state_change_requests"].([]interface{}); ok {
-	// 	result.StateChangeRequests = expandVirtualMachineStateChangeRequests(v)
-	// }
+	if v, ok := in["conditions"].([]interface{}); ok {
+		conditions, err := expandMPIJobConditions(v)
+		if err != nil {
+			return result, err
+		}
+		result.Conditions = conditions
+	}
 
 	return result, nil
 }

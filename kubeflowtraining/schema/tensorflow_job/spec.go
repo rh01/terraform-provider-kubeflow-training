@@ -4,20 +4,19 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 )
 
 func tfJobSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"run_policy": {
-			Type:        schema.TypeString,
-			Description: "RunPolicy encapsulates various runtime policies of the distributed training job, for example how to clean up resources and how long the job can stay active.",
+			Type:        schema.TypeList,
+			Description: "RunPolicy is a policy for how to run a job.",
 			Optional:    true,
-			ValidateFunc: validation.StringInSlice([]string{
-				"AutoDelete",
-				"LongRunning",
-			}, false),
+			MaxItems:    1,
+			Elem: &schema.Resource{
+				Schema: runPolicyFields(),
+			},
 		},
 		"elastic_policy": {
 			Type:        schema.TypeList,
@@ -28,9 +27,9 @@ func tfJobSpecFields() map[string]*schema.Schema {
 				Schema: elasticPolicyFields(),
 			},
 		},
-		"pytorch_replica_specs": {
+		"tensorflow_replica_specs": {
 			Type:        schema.TypeMap,
-			Description: "A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.",
+			Description: "A map of TensorflowReplicaType (type) to ReplicaSpec (value). Specifies the Tensorflow cluster configuration.",
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: tfJobReplicaSpecFields(),

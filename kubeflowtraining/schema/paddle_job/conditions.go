@@ -31,7 +31,6 @@ func paddleJobConditionsFields() map[string]*schema.Schema {
 				"Unknown",
 			}, false),
 		},
-
 		"reason": {
 			Type:        schema.TypeString,
 			Description: "Condition reason.",
@@ -40,6 +39,16 @@ func paddleJobConditionsFields() map[string]*schema.Schema {
 		"message": {
 			Type:        schema.TypeString,
 			Description: "Condition message.",
+			Optional:    true,
+		},
+		"last_update_time": {
+			Type:        schema.TypeString,
+			Description: "The last time this condition was updated.",
+			Optional:    true,
+		},
+		"last_transition_time": {
+			Type:        schema.TypeString,
+			Description: "Last time the condition transitioned from one status to another.",
 			Optional:    true,
 		},
 	}

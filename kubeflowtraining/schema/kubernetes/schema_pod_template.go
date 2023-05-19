@@ -43,11 +43,6 @@ func ExpandPodTemplate(l []interface{}) (*corev1.PodTemplateSpec, error) {
 func FlattenPodTemplateSpec(t corev1.PodTemplateSpec, prefix ...string) ([]interface{}, error) {
 	template := make(map[string]interface{})
 
-	// metaPrefix := "spec.0.template.0."
-	// if len(prefix) > 0 {
-	// 	metaPrefix = prefix[0]
-	// }
-	// template["metadata"] = flattenMetadata(t.ObjectMeta, d, metaPrefix)
 	spec, err := flattenPodSpec(t.Spec)
 	if err != nil {
 		return []interface{}{template}, err

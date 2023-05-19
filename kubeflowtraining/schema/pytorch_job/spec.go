@@ -10,7 +10,15 @@ import (
 
 func pyTorchJobSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"run_policy": {},
+		"run_policy": {
+			Type:        schema.TypeList,
+			Description: "RunPolicy is a policy for how to run a job.",
+			Optional:    true,
+			MaxItems:    1,
+			Elem: &schema.Resource{
+				Schema: runPolicyFields(),
+			},
+		},
 		"elastic_policy": {
 			Type:        schema.TypeList,
 			Description: "ElasticPolicy is a policy for elastic distributed training.",

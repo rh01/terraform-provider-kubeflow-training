@@ -6,13 +6,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func pyTorchJobConditionsFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"type": {
 			Type:        schema.TypeString,
-			Description: "VirtualMachineConditionType represent the type of the VM as concluded from its VMi status.",
+			Description: "PyTorchJobConditionType represent the type of the VM as concluded from its VMi status.",
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
 				"Failure",
@@ -51,7 +52,7 @@ func pyTorchJobConditionsSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("Hold the state information of the VirtualMachine and its VirtualMachineInstance."),
+		Description: fmt.Sprintf("Hold the state information of the PyTorchJob and its PyTorchJobInstance."),
 		Required:    true,
 		Elem: &schema.Resource{
 			Schema: fields,
@@ -67,10 +68,15 @@ func expandPyTorchJobConditions(conditions []interface{}) ([]commonv1.JobConditi
 		return result, nil
 	}
 
-	// for i, condition := range conditions {
-	// 	// in := condition.(map[string]interface{})
-
-	// }
+	for i, v := range conditions {
+		c := v.(map[string]interface{})
+		result[i] = commonv1.JobCondition{
+			Type:    commonv1.JobConditionType(c["type"].(string)),
+			Status:  corev1.ConditionStatus(c["status"].(string)),
+			Reason:  c["reason"].(string),
+			Message: c["message"].(string),
+		}
+	}
 
 	return result, nil
 }
@@ -84,7 +90,6 @@ func flattenPyTorchJobConditions(in []commonv1.JobCondition) []interface{} {
 		c["status"] = string(v.Status)
 		c["reason"] = v.Reason
 		c["message"] = v.Message
-
 		att[i] = c
 	}
 

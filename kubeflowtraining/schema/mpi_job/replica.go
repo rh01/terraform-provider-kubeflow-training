@@ -8,13 +8,6 @@ import (
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/kubernetes"
 )
 
-// A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.
-// For example,
-//
-//	{
-//	  "Master": PyTorchReplicaSpec,
-//	  "Worker": PyTorchReplicaSpec,
-//	}
 func mpiJobReplicaSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"master": mpiJobReplicaSpecSchema(),
@@ -53,6 +46,40 @@ func mpiJobReplicaSpecSchema() *schema.Schema {
 		},
 		Optional: true,
 	}
+}
+
+func expandMPIReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*commonv1.ReplicaSpec, error) {
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+
+	m := make(map[commonv1.ReplicaType]*commonv1.ReplicaSpec)
+	for k, v := range l[0].(map[string]interface{}) {
+		replicaType := commonv1.ReplicaType(k)
+		replicaSpec, err := expandMPIJobReplicaSpec(v.([]interface{}))
+		if err != nil {
+			return nil, err
+		}
+		m[replicaType] = replicaSpec
+	}
+	return m, nil
+}
+
+func flattenMPIReplicaSpec(in map[commonv1.ReplicaType]*commonv1.ReplicaSpec) ([]interface{}, error) {
+	if in == nil {
+		return []interface{}{nil}, nil
+	}
+
+	m := make(map[string]interface{})
+	for k, v := range in {
+		replicaType := string(k)
+		replicaSpec, err := flattenMPIJobReplicaSpec(v)
+		if err != nil {
+			return nil, err
+		}
+		m[replicaType] = replicaSpec
+	}
+	return []interface{}{m}, nil
 }
 
 func expandMPIJobReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {

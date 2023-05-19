@@ -8,13 +8,7 @@ import (
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/kubernetes"
 )
 
-// A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.
-// For example,
-//
-//	{
-//	  "Master": PyTorchReplicaSpec,
-//	  "Worker": PyTorchReplicaSpec,
-//	}
+
 func tfJobReplicaSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"master": tfJobReplicaSpecSchema(),
