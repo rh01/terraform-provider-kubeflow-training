@@ -29,9 +29,10 @@ func pyTorchJobSpecFields() map[string]*schema.Schema {
 			},
 		},
 		"pytorch_replica_specs": {
-			Type:        schema.TypeMap,
+			Type:        schema.TypeList,
 			Description: "A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.",
 			Optional:    true,
+			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: pyTorchJobReplicaSpecFields(),
 			},
@@ -40,8 +41,6 @@ func pyTorchJobSpecFields() map[string]*schema.Schema {
 }
 
 func pyTorchJobSpecSchema() *schema.Schema {
-	fields := pyTorchJobSpecFields()
-
 	return &schema.Schema{
 		Type: schema.TypeList,
 
@@ -49,7 +48,7 @@ func pyTorchJobSpecSchema() *schema.Schema {
 		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
-			Schema: fields,
+			Schema: pyTorchJobSpecFields(),
 		},
 	}
 
