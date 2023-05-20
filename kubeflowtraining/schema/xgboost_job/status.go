@@ -30,7 +30,7 @@ func xgboostJobStatusSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("VirtualMachineStatus represents the status returned by the controller to describe how the VirtualMachine is doing."),
+		Description: fmt.Sprintf("XGBoostJobStatus represents the status returned by the controller to describe how the XGBoostJob is doing."),
 		Optional:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
@@ -56,26 +56,26 @@ func expandXGBoostJobStatus(xgboostJobStatus []interface{}) (commonv1.JobStatus,
 	// 	result.Ready = v
 	// }
 	// if v, ok := in["conditions"].([]interface{}); ok {
-	// 	conditions, err := expandVirtualMachineConditions(v)
+	// 	conditions, err := expandXGBoostJobConditions(v)
 	// 	if err != nil {
 	// 		return result, err
 	// 	}
 	// 	result.Conditions = conditions
 	// }
 	// if v, ok := in["state_change_requests"].([]interface{}); ok {
-	// 	result.StateChangeRequests = expandVirtualMachineStateChangeRequests(v)
+	// 	result.StateChangeRequests = expandXGBoostJobStateChangeRequests(v)
 	// }
 
 	return result, nil
 }
 
-func flattenVirtualMachineStatus(in commonv1.JobStatus) []interface{} {
+func flattenXGBoostJobStatus(in commonv1.JobStatus) []interface{} {
 	att := make(map[string]interface{})
 
 	// att["created"] = in.Created
 	// att["ready"] = in.Ready
-	// att["conditions"] = flattenVirtualMachineConditions(in.Conditions)
-	// att["state_change_requests"] = flattenVirtualMachineStateChangeRequests(in.StateChangeRequests)
+	// att["conditions"] = flattenXGBoostJobConditions(in.Conditions)
+	// att["state_change_requests"] = flattenXGBoostJobStateChangeRequests(in.StateChangeRequests)
 
 	return []interface{}{att}
 }

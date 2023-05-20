@@ -12,7 +12,7 @@ func xgboostJobConditionsFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"type": {
 			Type:        schema.TypeString,
-			Description: "VirtualMachineConditionType represent the type of the VM as concluded from its VMi status.",
+			Description: "XGBoostJobConditionType represent the type of the VM as concluded from its VMi status.",
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
 				"Failure",
@@ -51,7 +51,7 @@ func xgboostJobConditionsSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("Hold the state information of the VirtualMachine and its VirtualMachineInstance."),
+		Description: fmt.Sprintf("Hold the state information of the XGBoostJob and its XGBoostJobInstance."),
 		Required:    true,
 		Elem: &schema.Resource{
 			Schema: fields,

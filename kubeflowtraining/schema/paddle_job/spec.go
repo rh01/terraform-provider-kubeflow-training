@@ -1,8 +1,6 @@
 package paddle_job
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 )
@@ -42,9 +40,8 @@ func paddleJobSpecSchema() *schema.Schema {
 	fields := paddleJobSpecFields()
 
 	return &schema.Schema{
-		Type: schema.TypeList,
-
-		Description: fmt.Sprintf("VirtualMachineSpec describes how the proper VirtualMachine should look like."),
+		Type:        schema.TypeList,
+		Description: "PaddleJobSpec describes how the proper PaddleJob should look like.",
 		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{

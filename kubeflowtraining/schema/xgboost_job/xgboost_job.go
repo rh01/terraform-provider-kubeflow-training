@@ -50,7 +50,7 @@ func FlattenXGBoostJob(in kubeflowv1.XGBoostJob) []interface{} {
 
 	att["metadata"] = kubernetes.FlattenMetadata(in.ObjectMeta)
 	att["spec"] = flattenXGBoostJobSpec(in.Spec)
-	att["status"] = flattenVirtualMachineStatus(in.Status)
+	att["status"] = flattenXGBoostJobStatus(in.Status)
 
 	return []interface{}{att}
 }
@@ -80,7 +80,7 @@ func ToResourceData(vm kubeflowv1.XGBoostJob, resourceData *schema.ResourceData)
 	if err := resourceData.Set("spec", flattenXGBoostJobSpec(vm.Spec)); err != nil {
 		return err
 	}
-	if err := resourceData.Set("status", flattenVirtualMachineStatus(vm.Status)); err != nil {
+	if err := resourceData.Set("status", flattenXGBoostJobStatus(vm.Status)); err != nil {
 		return err
 	}
 

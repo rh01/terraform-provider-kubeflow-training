@@ -50,7 +50,7 @@ func FlattenMPIJob(in kubeflowv1.MPIJob) []interface{} {
 
 	att["metadata"] = kubernetes.FlattenMetadata(in.ObjectMeta)
 	att["spec"] = flattenMPIJobSpec(in.Spec)
-	att["status"] = flattenVirtualMachineStatus(in.Status)
+	att["status"] = flattenMPIJobStatus(in.Status)
 
 	return []interface{}{att}
 }
@@ -80,7 +80,7 @@ func ToResourceData(vm kubeflowv1.MPIJob, resourceData *schema.ResourceData) err
 	if err := resourceData.Set("spec", flattenMPIJobSpec(vm.Spec)); err != nil {
 		return err
 	}
-	if err := resourceData.Set("status", flattenVirtualMachineStatus(vm.Status)); err != nil {
+	if err := resourceData.Set("status", flattenMPIJobStatus(vm.Status)); err != nil {
 		return err
 	}
 

@@ -50,7 +50,7 @@ func FlattenTFJob(in kubeflowv1.TFJob) []interface{} {
 
 	att["metadata"] = kubernetes.FlattenMetadata(in.ObjectMeta)
 	att["spec"] = flattenTFJobSpec(in.Spec)
-	att["status"] = flattenVirtualMachineStatus(in.Status)
+	att["status"] = flattenTFJobStatus(in.Status)
 
 	return []interface{}{att}
 }
@@ -80,7 +80,7 @@ func ToResourceData(vm kubeflowv1.TFJob, resourceData *schema.ResourceData) erro
 	if err := resourceData.Set("spec", flattenTFJobSpec(vm.Spec)); err != nil {
 		return err
 	}
-	if err := resourceData.Set("status", flattenVirtualMachineStatus(vm.Status)); err != nil {
+	if err := resourceData.Set("status", flattenTFJobStatus(vm.Status)); err != nil {
 		return err
 	}
 

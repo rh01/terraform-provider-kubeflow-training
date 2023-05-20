@@ -1,4 +1,4 @@
- 
+
 provider "terraform-provider-kubeflow-training" {
   # Configuration options...
 }
@@ -31,61 +31,61 @@ terraform {
 resource "kubeflow_pytorch_job" "pytorch_job" {
 
   metadata {
-    name = "pytorch-job"
+    name      = "pytorch-job"
     namespace = "ai-training"
   }
 
-  
+
 
   spec {
-    
+
     pytorch_replica_specs {
       master {
-        replicas = 1
+        replicas       = 1
         restart_policy = "Never"
 
         template {
           spec {
             container {
-              args = [ "python", "train.py" ]
-              command = [ "python", "train.py" ]
-              image = "gcr.io/kubeflow-examples/mnist"
-              name = "pytorch"
+              args    = ["python", "train.py"]
+              command = ["python", "train.py"]
+              image   = "gcr.io/kubeflow-examples/mnist"
+              name    = "pytorch"
               env {
-                name = "NCCL_DEBUG"
+                name  = "NCCL_DEBUG"
                 value = "INFO"
               }
               env {
-                name = "NCCL_IB_DISABLE"
+                name  = "NCCL_IB_DISABLE"
                 value = "0"
               }
 
               env {
-                name = "MASTER"
+                name  = "MASTER"
                 value = "1"
               }
               image_pull_policy = "IfNotPresent"
               resources {
-               limits = {
-                "nvidia.com/gpu" = 8
-                "rdma/hca"       = 1
-               }
+                limits = {
+                  "nvidia.com/gpu" = 8
+                  "rdma/hca"       = 1
+                }
 
               }
               security_context {
                 capabilities {
-                  add = [ "IPC_LOCK" ]
+                  add = ["IPC_LOCK"]
                 }
-                 
+
               }
               volume_mount {
-                 mount_path = "/dev/shm"
-                      name      = "cache-volume"
+                mount_path = "/dev/shm"
+                name       = "cache-volume"
               }
 
               volume_mount {
-                 mount_path = "/mnt/pfs"
-                      name      = "data"
+                mount_path = "/mnt/pfs"
+                name       = "data"
               }
             }
             image_pull_secrets {
@@ -109,48 +109,48 @@ resource "kubeflow_pytorch_job" "pytorch_job" {
       }
 
       worker {
-        replicas = 1
+        replicas       = 1
         restart_policy = "Never"
 
         template {
           spec {
             container {
-              args = [ "python", "train.py" ]
-              command = [ "python", "train.py" ]
-              image = "gcr.io/kubeflow-examples/mnist"
-              name = "pytorch"
+              args    = ["python", "train.py"]
+              command = ["python", "train.py"]
+              image   = "gcr.io/kubeflow-examples/mnist"
+              name    = "pytorch"
               env {
-                name = "NCCL_DEBUG"
+                name  = "NCCL_DEBUG"
                 value = "INFO"
               }
               env {
-                name = "NCCL_IB_DISABLE"
+                name  = "NCCL_IB_DISABLE"
                 value = "0"
               }
 
-        
+
               image_pull_policy = "IfNotPresent"
               resources {
-               limits = {
-                "nvidia.com/gpu" = 8
-                "rdma/hca"       = 1
-               }
+                limits = {
+                  "nvidia.com/gpu" = 8
+                  "rdma/hca"       = 1
+                }
 
               }
               security_context {
                 capabilities {
-                  add = [ "IPC_LOCK" ]
+                  add = ["IPC_LOCK"]
                 }
-                 
+
               }
               volume_mount {
-                 mount_path = "/dev/shm"
-                      name      = "cache-volume"
+                mount_path = "/dev/shm"
+                name       = "cache-volume"
               }
 
               volume_mount {
-                 mount_path = "/mnt/pfs"
-                      name      = "data"
+                mount_path = "/mnt/pfs"
+                name       = "data"
               }
             }
             image_pull_secrets {
@@ -174,7 +174,7 @@ resource "kubeflow_pytorch_job" "pytorch_job" {
       }
 
     }
-    
+
   }
 }
 

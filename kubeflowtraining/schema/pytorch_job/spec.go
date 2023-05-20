@@ -42,7 +42,7 @@ func pyTorchJobSpecSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("PyTorchJobSpec describes how the proper VirtualMachine should look like."),
+		Description: fmt.Sprintf("PyTorchJobSpec describes how the proper PyTorchJob should look like."),
 		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{

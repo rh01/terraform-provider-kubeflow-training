@@ -51,7 +51,7 @@ func mpiJobSpecSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("VirtualMachineSpec describes how the proper VirtualMachine should look like."),
+		Description: fmt.Sprintf("MPIJobSpec describes how the proper MPIJob should look like."),
 		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{

@@ -63,7 +63,7 @@ func mpiJobStatusSchema() *schema.Schema {
 
 	return &schema.Schema{
 		Type:        schema.TypeList,
-		Description: fmt.Sprintf("VirtualMachineStatus represents the status returned by the controller to describe how the VirtualMachine is doing."),
+		Description: fmt.Sprintf("MPIJobStatus represents the status returned by the controller to describe how the MPIJob is doing."),
 		Optional:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
@@ -93,13 +93,8 @@ func expandMPIJobStatus(mpiJobStatus []interface{}) (commonv1.JobStatus, error) 
 	return result, nil
 }
 
-func flattenVirtualMachineStatus(in commonv1.JobStatus) []interface{} {
+func flattenMPIJobStatus(in commonv1.JobStatus) []interface{} {
 	att := make(map[string]interface{})
-
-	// att["created"] = in.Created
-	// att["ready"] = in.Ready
-	// att["conditions"] = flattenVirtualMachineConditions(in.Conditions)
-	// att["state_change_requests"] = flattenVirtualMachineStateChangeRequests(in.StateChangeRequests)
 
 	return []interface{}{att}
 }

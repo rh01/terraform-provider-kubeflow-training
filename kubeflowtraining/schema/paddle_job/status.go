@@ -30,7 +30,7 @@ func paddleJobStatusSchema() *schema.Schema {
 	return &schema.Schema{
 		Type: schema.TypeList,
 
-		Description: fmt.Sprintf("VirtualMachineStatus represents the status returned by the controller to describe how the VirtualMachine is doing."),
+		Description: fmt.Sprintf("PaddleJobStatus represents the status returned by the controller to describe how the PaddleJob is doing."),
 		Optional:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
@@ -56,26 +56,26 @@ func expandPaddleJobStatus(paddleJobStatus []interface{}) (commonv1.JobStatus, e
 	// 	result.Ready = v
 	// }
 	// if v, ok := in["conditions"].([]interface{}); ok {
-	// 	conditions, err := expandVirtualMachineConditions(v)
+	// 	conditions, err := expandPaddleJobConditions(v)
 	// 	if err != nil {
 	// 		return result, err
 	// 	}
 	// 	result.Conditions = conditions
 	// }
 	// if v, ok := in["state_change_requests"].([]interface{}); ok {
-	// 	result.StateChangeRequests = expandVirtualMachineStateChangeRequests(v)
+	// 	result.StateChangeRequests = expandPaddleJobStateChangeRequests(v)
 	// }
 
 	return result, nil
 }
 
-func flattenVirtualMachineStatus(in commonv1.JobStatus) []interface{} {
+func flattenPaddleJobStatus(in commonv1.JobStatus) []interface{} {
 	att := make(map[string]interface{})
 
 	// att["created"] = in.Created
 	// att["ready"] = in.Ready
-	// att["conditions"] = flattenVirtualMachineConditions(in.Conditions)
-	// att["state_change_requests"] = flattenVirtualMachineStateChangeRequests(in.StateChangeRequests)
+	// att["conditions"] = flattenPaddleJobConditions(in.Conditions)
+	// att["state_change_requests"] = flattenPaddleJobStateChangeRequests(in.StateChangeRequests)
 
 	return []interface{}{att}
 }

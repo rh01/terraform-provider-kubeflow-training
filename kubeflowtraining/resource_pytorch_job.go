@@ -41,17 +41,17 @@ func resourceKubeFlowPyTorchJobCreate(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	log.Printf("[INFO] Creating new data volume: %#v", ptj)
+	log.Printf("[INFO] Creating new PyTorchJob: %#v", ptj)
 	if err := cli.CreatePyTorchJob(ptj); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new data volume: %#v", ptj)
+	log.Printf("[INFO] Submitted new PyTorchJob: %#v", ptj)
 	if err := pytorch_job.ToResourceData(*ptj, resourceData); err != nil {
 		return err
 	}
 	resourceData.SetId(utils.BuildId(ptj.ObjectMeta))
 
-	// Wait for data volume instance's status phase to be succeeded:
+	// Wait for PyTorchJob instance's status phase to be succeeded:
 	name := ptj.ObjectMeta.Name
 	namespace := ptj.ObjectMeta.Namespace
 
@@ -83,7 +83,7 @@ func resourceKubeFlowPyTorchJobCreate(resourceData *schema.ResourceData, meta in
 			// // case cdiv1.Succeeded:
 			// // 	return dv, "Succeeded", nil
 			// // case cdiv1.Failed:
-			// // 	return dv, "", fmt.Errorf("data volume failed to be created, finished with phase=\"failed\"")
+			// // 	return dv, "", fmt.Errorf("PyTorchJob failed to be created, finished with phase=\"failed\"")
 			// }
 
 			log.Printf("[DEBUG] PyTorchJob %s is being created", name)
@@ -105,14 +105,14 @@ func resourceKubeFlowPyTorchJobRead(resourceData *schema.ResourceData, meta inte
 		return err
 	}
 
-	log.Printf("[INFO] Reading data volume %s", name)
+	log.Printf("[INFO] Reading PyTorchJob %s", name)
 
 	dv, err := cli.GetPyTorchJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received data volume: %#v", dv)
+	log.Printf("[INFO] Received PyTorchJob: %#v", dv)
 
 	return pytorch_job.ToResourceData(*dv, resourceData)
 }
@@ -131,13 +131,13 @@ func resourceKubeFlowPyTorchJobUpdate(resourceData *schema.ResourceData, meta in
 		return fmt.Errorf("Failed to marshal update operations: %s", err)
 	}
 
-	log.Printf("[INFO] Updating data volume: %s", ops)
+	log.Printf("[INFO] Updating PyTorchJob: %s", ops)
 	out := &kubeflowv1.PyTorchJob{}
 	if err := cli.UpdatePyTorchJob(namespace, name, out, data); err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Submitted updated data volume: %#v", out)
+	log.Printf("[INFO] Submitted updated PyTorchJob: %#v", out)
 
 	return resourceKubeFlowPyTorchJobRead(resourceData, meta)
 }
@@ -150,7 +150,7 @@ func resourceKubeFlowPyTorchJobDelete(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	log.Printf("[INFO] Deleting data volume: %#v", name)
+	log.Printf("[INFO] Deleting PyTorchJob: %#v", name)
 	if err := cli.DeletePyTorchJob(namespace, name); err != nil {
 		return err
 	}
@@ -168,7 +168,7 @@ func resourceKubeFlowPyTorchJobDelete(resourceData *schema.ResourceData, meta in
 				return dv, "", err
 			}
 
-			log.Printf("[DEBUG] data volume %s is being deleted", dv.GetName())
+			log.Printf("[DEBUG] PyTorchJob %s is being deleted", dv.GetName())
 			return dv, "Deleting", nil
 		},
 	}
@@ -177,7 +177,7 @@ func resourceKubeFlowPyTorchJobDelete(resourceData *schema.ResourceData, meta in
 		return fmt.Errorf("%s", err)
 	}
 
-	log.Printf("[INFO] data volume %s deleted", name)
+	log.Printf("[INFO] PyTorchJob %s deleted", name)
 
 	resourceData.SetId("")
 	return nil
@@ -191,7 +191,7 @@ func resourceKubeFlowPyTorchJobExists(resourceData *schema.ResourceData, meta in
 		return false, err
 	}
 
-	log.Printf("[INFO] Checking data volume %s", name)
+	log.Printf("[INFO] Checking PyTorchJob %s", name)
 	if _, err := cli.GetPyTorchJob(namespace, name); err != nil {
 		if statusErr, ok := err.(*errors.StatusError); ok && statusErr.ErrStatus.Code == 404 {
 			return false, nil

@@ -50,7 +50,7 @@ func FlattenPaddleJob(in kubeflowv1.PaddleJob) []interface{} {
 
 	att["metadata"] = kubernetes.FlattenMetadata(in.ObjectMeta)
 	att["spec"] = flattenPaddleJobSpec(in.Spec)
-	att["status"] = flattenVirtualMachineStatus(in.Status)
+	att["status"] = flattenPaddleJobStatus(in.Status)
 
 	return []interface{}{att}
 }
@@ -80,7 +80,7 @@ func ToResourceData(vm kubeflowv1.PaddleJob, resourceData *schema.ResourceData) 
 	if err := resourceData.Set("spec", flattenPaddleJobSpec(vm.Spec)); err != nil {
 		return err
 	}
-	if err := resourceData.Set("status", flattenVirtualMachineStatus(vm.Status)); err != nil {
+	if err := resourceData.Set("status", flattenPaddleJobStatus(vm.Status)); err != nil {
 		return err
 	}
 

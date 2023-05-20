@@ -41,17 +41,17 @@ func resourceKubeFlowPaddleJobCreate(resourceData *schema.ResourceData, meta int
 		return err
 	}
 
-	log.Printf("[INFO] Creating new data volume: %#v", dv)
+	log.Printf("[INFO] Creating new PaddleJob: %#v", dv)
 	if err := cli.CreatePaddleJob(dv); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new data volume: %#v", dv)
+	log.Printf("[INFO] Submitted new PaddleJob: %#v", dv)
 	if err := paddle_job.ToResourceData(*dv, resourceData); err != nil {
 		return err
 	}
 	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
 
-	// Wait for data volume instance's status phase to be succeeded:
+	// Wait for PaddleJob instance's status phase to be succeeded:
 	name := dv.ObjectMeta.Name
 	namespace := dv.ObjectMeta.Namespace
 
@@ -64,7 +64,7 @@ func resourceKubeFlowPaddleJobCreate(resourceData *schema.ResourceData, meta int
 			dv, err = cli.GetPaddleJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
-					log.Printf("[DEBUG] data volume %s is not created yet", name)
+					log.Printf("[DEBUG] PaddleJob %s is not created yet", name)
 					return dv, "Creating", nil
 				}
 				return dv, "", err
@@ -74,10 +74,10 @@ func resourceKubeFlowPaddleJobCreate(resourceData *schema.ResourceData, meta int
 			// case cdiv1.Succeeded:
 			// 	return dv, "Succeeded", nil
 			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("data volume failed to be created, finished with phase=\"failed\"")
+			// 	return dv, "", fmt.Errorf("PaddleJob failed to be created, finished with phase=\"failed\"")
 			// }
 
-			log.Printf("[DEBUG] data volume %s is being created", name)
+			log.Printf("[DEBUG] PaddleJob %s is being created", name)
 			return dv, "Creating", nil
 		},
 	}
@@ -96,14 +96,14 @@ func resourceKubeFlowPaddleJobRead(resourceData *schema.ResourceData, meta inter
 		return err
 	}
 
-	log.Printf("[INFO] Reading data volume %s", name)
+	log.Printf("[INFO] Reading PaddleJob %s", name)
 
 	dv, err := cli.GetPaddleJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received data volume: %#v", dv)
+	log.Printf("[INFO] Received PaddleJob: %#v", dv)
 
 	return paddle_job.ToResourceData(*dv, resourceData)
 }
@@ -122,13 +122,13 @@ func resourceKubeFlowPaddleJobUpdate(resourceData *schema.ResourceData, meta int
 		return fmt.Errorf("Failed to marshal update operations: %s", err)
 	}
 
-	log.Printf("[INFO] Updating data volume: %s", ops)
+	log.Printf("[INFO] Updating PaddleJob: %s", ops)
 	out := &kubeflowv1.PaddleJob{}
 	if err := cli.UpdatePaddleJob(namespace, name, out, data); err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Submitted updated data volume: %#v", out)
+	log.Printf("[INFO] Submitted updated PaddleJob: %#v", out)
 
 	return resourceKubeFlowPaddleJobRead(resourceData, meta)
 }
@@ -141,12 +141,12 @@ func resourceKubeFlowPaddleJobDelete(resourceData *schema.ResourceData, meta int
 		return err
 	}
 
-	log.Printf("[INFO] Deleting data volume: %#v", name)
+	log.Printf("[INFO] Deleting PaddleJob: %#v", name)
 	if err := cli.DeletePaddleJob(namespace, name); err != nil {
 		return err
 	}
 
-	// Wait for data volume instance to be removed:
+	// Wait for PaddleJob instance to be removed:
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
@@ -159,7 +159,7 @@ func resourceKubeFlowPaddleJobDelete(resourceData *schema.ResourceData, meta int
 				return dv, "", err
 			}
 
-			log.Printf("[DEBUG] data volume %s is being deleted", dv.GetName())
+			log.Printf("[DEBUG] PaddleJob %s is being deleted", dv.GetName())
 			return dv, "Deleting", nil
 		},
 	}
@@ -168,7 +168,7 @@ func resourceKubeFlowPaddleJobDelete(resourceData *schema.ResourceData, meta int
 		return fmt.Errorf("%s", err)
 	}
 
-	log.Printf("[INFO] data volume %s deleted", name)
+	log.Printf("[INFO] PaddleJob %s deleted", name)
 
 	resourceData.SetId("")
 	return nil
@@ -182,7 +182,7 @@ func resourceKubeFlowPaddleJobExists(resourceData *schema.ResourceData, meta int
 		return false, err
 	}
 
-	log.Printf("[INFO] Checking data volume %s", name)
+	log.Printf("[INFO] Checking PaddleJob %s", name)
 	if _, err := cli.GetPaddleJob(namespace, name); err != nil {
 		if statusErr, ok := err.(*errors.StatusError); ok && statusErr.ErrStatus.Code == 404 {
 			return false, nil
