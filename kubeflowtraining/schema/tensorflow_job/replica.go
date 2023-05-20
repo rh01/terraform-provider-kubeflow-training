@@ -27,7 +27,7 @@ func tfJobReplicaSpecTemplateFields() map[string]*schema.Schema {
 			Type:     schema.TypeList,
 			MaxItems: 1,
 			Elem: &schema.Resource{
-				Schema: kubernetes.PodTemplateFields(),
+				Schema: kubernetes.PodTemplateFields("tfjob"),
 			},
 			Optional: true,
 		},

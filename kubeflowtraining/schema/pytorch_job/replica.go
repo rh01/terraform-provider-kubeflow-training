@@ -1,6 +1,8 @@
 package pytorch_job
 
 import (
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/kubernetes"
@@ -24,7 +26,7 @@ func pyTorchJobReplicaSpecTemplateFields() map[string]*schema.Schema {
 			Type:     schema.TypeList,
 			MaxItems: 1,
 			Elem: &schema.Resource{
-				Schema: kubernetes.PodTemplateFields(),
+				Schema: kubernetes.PodTemplateFields("pytorchjob"),
 			},
 			Optional: true,
 		},
@@ -53,11 +55,21 @@ func expandPyTorchJobReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*com
 
 	m := make(map[commonv1.ReplicaType]*commonv1.ReplicaSpec)
 	for k, v := range l[0].(map[string]interface{}) {
+		if !strings.EqualFold(k, "master") && !strings.EqualFold(k, "worker") {
+			continue
+		}
+		if k == "master" {
+			k = "Master"
+		} else {
+			k = "Worker"
+		}
+
 		replicaType := commonv1.ReplicaType(k)
 		replicaSpec, err := expandReplicaSpec(v.([]interface{}))
 		if err != nil {
 			return nil, err
 		}
+
 		m[replicaType] = replicaSpec
 	}
 	return m, nil
@@ -69,7 +81,7 @@ func expandReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
 	}
 	m := l[0].(map[string]interface{})
 
-	replicas := m["replicas"].(*int32)
+	replicas := int32(m["replicas"].(int))
 	template, err := kubernetes.ExpandPodTemplate(m["template"].([]interface{}))
 	if err != nil {
 		return nil, err
@@ -77,7 +89,7 @@ func expandReplicaSpec(l []interface{}) (*commonv1.ReplicaSpec, error) {
 	restartPolicy := m["restart_policy"].(string)
 
 	return &commonv1.ReplicaSpec{
-		Replicas:      replicas,
+		Replicas:      &replicas,
 		Template:      *template,
 		RestartPolicy: commonv1.RestartPolicy(restartPolicy),
 	}, nil

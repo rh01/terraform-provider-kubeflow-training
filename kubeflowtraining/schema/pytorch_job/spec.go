@@ -11,19 +11,17 @@ import (
 func pyTorchJobSpecFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"run_policy": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeMap,
 			Description: "RunPolicy is a policy for how to run a job.",
 			Optional:    true,
-			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: runPolicyFields(),
 			},
 		},
 		"elastic_policy": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeMap,
 			Description: "ElasticPolicy is a policy for elastic distributed training.",
 			Optional:    true,
-			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: elasticPolicyFields(),
 			},
@@ -32,7 +30,7 @@ func pyTorchJobSpecFields() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Description: "A map of PyTorchReplicaType (type) to ReplicaSpec (value). Specifies the PyTorch cluster configuration.",
 			Optional:    true,
-			MaxItems: 1,
+			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: pyTorchJobReplicaSpecFields(),
 			},
@@ -68,7 +66,7 @@ func expandPyTorchJobSpec(pyTorchJob []interface{}) (kubeflowv1.PyTorchJobSpec, 
 	}
 
 	if v, ok := in["elastic_policy"]; ok {
-		result.ElasticPolicy, _ = expandElasticPolicy(v.([]interface{}))
+		result.ElasticPolicy, _ = expandElasticPolicy(v.(interface{}))
 	}
 
 	if v, ok := in["pytorch_replica_specs"]; ok {

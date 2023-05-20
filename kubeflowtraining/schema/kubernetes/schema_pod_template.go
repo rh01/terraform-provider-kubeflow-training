@@ -6,8 +6,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func PodTemplateFields() map[string]*schema.Schema {
+func PodTemplateFields(objectName string) map[string]*schema.Schema {
 	s := map[string]*schema.Schema{
+		// "metadata": metadataSchema(objectName, true),
 		"spec": {
 			Type:        schema.TypeList,
 			Description: "Specification of the desired behavior of the pod. More info: " + "" + "https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status" + "" + "",
@@ -28,7 +29,7 @@ func ExpandPodTemplate(l []interface{}) (*corev1.PodTemplateSpec, error) {
 	}
 	in := l[0].(map[string]interface{})
 
-	obj.ObjectMeta = expandMetadata(in["metadata"].([]interface{}))
+	// obj.ObjectMeta = expandMetadata(in["metadata"].([]interface{}))
 
 	if v, ok := in["spec"].([]interface{}); ok && len(v) > 0 {
 		podSpec, err := expandPodSpec(in["spec"].([]interface{}))
@@ -43,6 +44,11 @@ func ExpandPodTemplate(l []interface{}) (*corev1.PodTemplateSpec, error) {
 func FlattenPodTemplateSpec(t corev1.PodTemplateSpec, prefix ...string) ([]interface{}, error) {
 	template := make(map[string]interface{})
 
+	// metaPrefix := "spec.0.template.0."
+	// if len(prefix) > 0 {
+	// 	metaPrefix = prefix[0]
+	// }
+	// template["metadata"] = flattenMetadata(t.ObjectMeta, d, metaPrefix)
 	spec, err := flattenPodSpec(t.Spec)
 	if err != nil {
 		return []interface{}{template}, err
