@@ -7,11 +7,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/client"
 	tf_job "github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/tensorflow_job"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils/patch"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -68,6 +70,58 @@ func resourceKubeFlowTFJobCreate(resourceData *schema.ResourceData, meta interfa
 					return tfj, "Creating", nil
 				}
 				return tfj, "", err
+			}
+
+			for _, c := range tfj.Status.Conditions {
+				if c.Type == commonv1.JobSucceeded && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] TFJob %s is succeeded", name)
+					return tfj, "Succeeded", nil
+				}
+
+				if c.Type == commonv1.JobFailed && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] TFJob %s is failed", name)
+					return tfj, "Failed", nil
+				}
+
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] TFJob %s is running", name)
+					return tfj, "Running", nil
+				}
+
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] TFJob %s is pending", name)
+					return tfj, "Pending", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] TFJob %s is created", name)
+					return tfj, "Created", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] TFJob %s is creating", name)
+					return tfj, "Creating", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] TFJob %s is restarting", name)
+					return tfj, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] TFJob %s is restarting", name)
+					return tfj, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionUnknown {
+					log.Printf("[DEBUG] TFJob %s is restarting", name)
+					return tfj, "Restarting", nil
+				}
+			}
+
+			if tfj.Status.StartTime == nil {
+				log.Printf("[DEBUG] TFJob %s is not started yet", name)
+				return tfj, "Creating", nil
 			}
 
 			log.Printf("[DEBUG] TFJob %s is being created", name)

@@ -7,11 +7,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/client"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/mpi_job"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils/patch"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -69,14 +71,57 @@ func resourceKubeFlowMPIJobCreate(resourceData *schema.ResourceData, meta interf
 				}
 				return mpij, "", err
 			}
+			for _, c := range mpij.Status.Conditions {
+				if c.Type == commonv1.JobSucceeded && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] MPIJob %s is succeeded", name)
+					return mpij, "Succeeded", nil
+				}
 
-			// switch dv.Status.Phase {
-			// case cdiv1.Succeeded:
-			// 	return dv, "Succeeded", nil
-			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("data volume failed to be created, finished with phase=\"failed\"")
-			// }
+				if c.Type == commonv1.JobFailed && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] MPIJob %s is failed", name)
+					return mpij, "Failed", nil
+				}
 
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] MPIJob %s is running", name)
+					return mpij, "Running", nil
+				}
+
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] MPIJob %s is pending", name)
+					return mpij, "Pending", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] MPIJob %s is created", name)
+					return mpij, "Created", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] MPIJob %s is creating", name)
+					return mpij, "Creating", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] MPIJob %s is restarting", name)
+					return mpij, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] MPIJob %s is restarting", name)
+					return mpij, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionUnknown {
+					log.Printf("[DEBUG] MPIJob %s is restarting", name)
+					return mpij, "Restarting", nil
+				}
+			}
+
+			if mpij.Status.StartTime == nil {
+				log.Printf("[DEBUG] MPIJob %s is not started yet", name)
+				return mpij, "Creating", nil
+			}
 			log.Printf("[DEBUG] data volume %s is being created", name)
 			return mpij, "Creating", nil
 		},
