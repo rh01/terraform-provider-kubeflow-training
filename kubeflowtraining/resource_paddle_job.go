@@ -36,24 +36,24 @@ func resourceKubeFlowPaddleJob() *schema.Resource {
 func resourceKubeFlowPaddleJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := paddle_job.FromResourceData(resourceData)
+	pj, err := paddle_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Creating new PaddleJob: %#v", dv)
-	if err := cli.CreatePaddleJob(dv); err != nil {
+	log.Printf("[INFO] Creating new PaddleJob: %#v", pj)
+	if err := cli.CreatePaddleJob(pj); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new PaddleJob: %#v", dv)
-	if err := paddle_job.ToResourceData(*dv, resourceData); err != nil {
+	log.Printf("[INFO] Submitted new PaddleJob: %#v", pj)
+	if err := paddle_job.ToResourceData(*pj, resourceData); err != nil {
 		return err
 	}
-	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
+	resourceData.SetId(utils.BuildId(pj.ObjectMeta))
 
 	// Wait for PaddleJob instance's status phase to be succeeded:
-	name := dv.ObjectMeta.Name
-	namespace := dv.ObjectMeta.Namespace
+	name := pj.ObjectMeta.Name
+	namespace := pj.ObjectMeta.Namespace
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Creating"},
@@ -61,31 +61,25 @@ func resourceKubeFlowPaddleJobCreate(resourceData *schema.ResourceData, meta int
 		Timeout: resourceData.Timeout(schema.TimeoutCreate),
 		Refresh: func() (interface{}, string, error) {
 			var err error
-			dv, err = cli.GetPaddleJob(namespace, name)
+			pj, err = cli.GetPaddleJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					log.Printf("[DEBUG] PaddleJob %s is not created yet", name)
-					return dv, "Creating", nil
+					return pj, "Creating", nil
 				}
-				return dv, "", err
+				return pj, "", err
 			}
 
-			// switch dv.Status.Phase {
-			// case cdiv1.Succeeded:
-			// 	return dv, "Succeeded", nil
-			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("PaddleJob failed to be created, finished with phase=\"failed\"")
-			// }
-
+		 
 			log.Printf("[DEBUG] PaddleJob %s is being created", name)
-			return dv, "Creating", nil
+			return pj, "Creating", nil
 		},
 	}
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return paddle_job.ToResourceData(*dv, resourceData)
+	return paddle_job.ToResourceData(*pj, resourceData)
 }
 
 func resourceKubeFlowPaddleJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -98,14 +92,14 @@ func resourceKubeFlowPaddleJobRead(resourceData *schema.ResourceData, meta inter
 
 	log.Printf("[INFO] Reading PaddleJob %s", name)
 
-	dv, err := cli.GetPaddleJob(namespace, name)
+	pj, err := cli.GetPaddleJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received PaddleJob: %#v", dv)
+	log.Printf("[INFO] Received PaddleJob: %#v", pj)
 
-	return paddle_job.ToResourceData(*dv, resourceData)
+	return paddle_job.ToResourceData(*pj, resourceData)
 }
 
 func resourceKubeFlowPaddleJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -151,16 +145,16 @@ func resourceKubeFlowPaddleJobDelete(resourceData *schema.ResourceData, meta int
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
 		Refresh: func() (interface{}, string, error) {
-			dv, err := cli.GetPaddleJob(namespace, name)
+			pj, err := cli.GetPaddleJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					return nil, "", nil
 				}
-				return dv, "", err
+				return pj, "", err
 			}
 
-			log.Printf("[DEBUG] PaddleJob %s is being deleted", dv.GetName())
-			return dv, "Deleting", nil
+			log.Printf("[DEBUG] PaddleJob %s is being deleted", pj.GetName())
+			return pj, "Deleting", nil
 		},
 	}
 

@@ -122,11 +122,21 @@ func flattenSchedulingPolicy(sp *commonv1.SchedulingPolicy) []interface{} {
 		return []interface{}{}
 	}
 	m := map[string]interface{}{}
-	m["min_available"] = int(*sp.MinAvailable)
-	m["queue"] = sp.Queue
-	// m["min_resources"] = flattenResources(sp.MinResources)
-	m["priority_class"] = sp.PriorityClass
-	m["schedule_timeout_seconds"] = int(*sp.ScheduleTimeoutSeconds)
+	if sp.MinAvailable != nil {
+		m["min_available"] = int(*sp.MinAvailable)
+	}
+	if sp.Queue != "" {
+		m["queue"] = sp.Queue
+	}
+	// if sp.MinResources != nil {
+	// 	m["min_resources"] = flattenResources(sp.MinResources)
+	// }
+	if sp.PriorityClass != "" {
+		m["priority_class"] = sp.PriorityClass
+	}
+	if sp.ScheduleTimeoutSeconds != nil {
+		m["schedule_timeout_seconds"] = int(*sp.ScheduleTimeoutSeconds)
+	}
 	return []interface{}{m}
 }
 
@@ -135,10 +145,20 @@ func flattenRunPolicy(rp *commonv1.RunPolicy) map[string]interface{} {
 	if rp == nil {
 		return m
 	}
-	m["clean_pod_policy"] = string(*rp.CleanPodPolicy)
-	m["ttl_seconds_after_finished"] = int(*rp.TTLSecondsAfterFinished)
-	m["active_deadline_seconds"] = int(*rp.ActiveDeadlineSeconds)
-	m["backoff_limit"] = int(*rp.BackoffLimit)
-	m["scheduling_policy"] = flattenSchedulingPolicy(rp.SchedulingPolicy)
+	if rp.CleanPodPolicy != nil {
+		m["clean_pod_policy"] = string(*rp.CleanPodPolicy)
+	}
+	if rp.TTLSecondsAfterFinished != nil {
+		m["ttl_seconds_after_finished"] = int(*rp.TTLSecondsAfterFinished)
+	}
+	if rp.ActiveDeadlineSeconds != nil {
+		m["active_deadline_seconds"] = int(*rp.ActiveDeadlineSeconds)
+	}
+	if rp.BackoffLimit != nil {
+		m["backoff_limit"] = int(*rp.BackoffLimit)
+	}
+	if rp.SchedulingPolicy != nil {
+		m["scheduling_policy"] = flattenSchedulingPolicy(rp.SchedulingPolicy)
+	}
 	return m
 }

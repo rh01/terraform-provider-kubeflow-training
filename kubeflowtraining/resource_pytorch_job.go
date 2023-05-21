@@ -7,7 +7,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
+	corev1 "k8s.io/api/core/v1"
+
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/client"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/pytorch_job"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils"
@@ -75,16 +78,57 @@ func resourceKubeFlowPyTorchJobCreate(resourceData *schema.ResourceData, meta in
 				return ptj, "Creating", nil
 			}
 
-			
+			for _, c := range ptj.Status.Conditions {
+				if c.Type == commonv1.JobSucceeded && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] PyTorchJob %s is succeeded", name)
+					return ptj, "Succeeded", nil
+				}
 
-			// ptj.Status.ReplicaStatuses
+				if c.Type == commonv1.JobFailed && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] PyTorchJob %s is failed", name)
+					return ptj, "Failed", nil
+				}
 
-			// switch dv.Status.Phase {
-			// // case cdiv1.Succeeded:
-			// // 	return dv, "Succeeded", nil
-			// // case cdiv1.Failed:
-			// // 	return dv, "", fmt.Errorf("PyTorchJob failed to be created, finished with phase=\"failed\"")
-			// }
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] PyTorchJob %s is running", name)
+					return ptj, "Running", nil
+				}
+
+				if c.Type == commonv1.JobRunning && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] PyTorchJob %s is pending", name)
+					return ptj, "Pending", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] PyTorchJob %s is created", name)
+					return ptj, "Created", nil
+				}
+
+				if c.Type == commonv1.JobCreated && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] PyTorchJob %s is creating", name)
+					return ptj, "Creating", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionTrue {
+					log.Printf("[DEBUG] PyTorchJob %s is restarting", name)
+					return ptj, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionFalse {
+					log.Printf("[DEBUG] PyTorchJob %s is restarting", name)
+					return ptj, "Restarting", nil
+				}
+
+				if c.Type == commonv1.JobRestarting && c.Status == corev1.ConditionUnknown {
+					log.Printf("[DEBUG] PyTorchJob %s is restarting", name)
+					return ptj, "Restarting", nil
+				}
+			}
+
+			if ptj.Status.StartTime == nil {
+				log.Printf("[DEBUG] PyTorchJob %s is not started yet", name)
+				return ptj, "Creating", nil
+			}
 
 			log.Printf("[DEBUG] PyTorchJob %s is being created", name)
 			return ptj, "Creating", nil
@@ -107,14 +151,14 @@ func resourceKubeFlowPyTorchJobRead(resourceData *schema.ResourceData, meta inte
 
 	log.Printf("[INFO] Reading PyTorchJob %s", name)
 
-	dv, err := cli.GetPyTorchJob(namespace, name)
+	ptj, err := cli.GetPyTorchJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received PyTorchJob: %#v", dv)
+	log.Printf("[INFO] Received PyTorchJob: %#v", ptj)
 
-	return pytorch_job.ToResourceData(*dv, resourceData)
+	return pytorch_job.ToResourceData(*ptj, resourceData)
 }
 
 func resourceKubeFlowPyTorchJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -128,7 +172,7 @@ func resourceKubeFlowPyTorchJobUpdate(resourceData *schema.ResourceData, meta in
 	ops := pytorch_job.AppendPatchOps("", "", resourceData, []patch.PatchOperation{})
 	data, err := ops.MarshalJSON()
 	if err != nil {
-		return fmt.Errorf("Failed to marshal update operations: %s", err)
+		return fmt.Errorf("failed to marshal update operations: %s", err)
 	}
 
 	log.Printf("[INFO] Updating PyTorchJob: %s", ops)
@@ -160,16 +204,16 @@ func resourceKubeFlowPyTorchJobDelete(resourceData *schema.ResourceData, meta in
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
 		Refresh: func() (interface{}, string, error) {
-			dv, err := cli.GetPyTorchJob(namespace, name)
+			ptj, err := cli.GetPyTorchJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					return nil, "", nil
 				}
-				return dv, "", err
+				return ptj, "", err
 			}
 
-			log.Printf("[DEBUG] PyTorchJob %s is being deleted", dv.GetName())
-			return dv, "Deleting", nil
+			log.Printf("[DEBUG] PyTorchJob %s is being deleted", ptj.GetName())
+			return ptj, "Deleting", nil
 		},
 	}
 

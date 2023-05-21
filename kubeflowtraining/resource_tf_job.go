@@ -36,24 +36,24 @@ func resourceKubeFlowTFJob() *schema.Resource {
 func resourceKubeFlowTFJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := tf_job.FromResourceData(resourceData)
+	tfj, err := tf_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Creating new TFJob: %#v", dv)
-	if err := cli.CreateTFJob(dv); err != nil {
+	log.Printf("[INFO] Creating new TFJob: %#v", tfj)
+	if err := cli.CreateTFJob(tfj); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new TFJob: %#v", dv)
-	if err := tf_job.ToResourceData(*dv, resourceData); err != nil {
+	log.Printf("[INFO] Submitted new TFJob: %#v", tfj)
+	if err := tf_job.ToResourceData(*tfj, resourceData); err != nil {
 		return err
 	}
-	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
+	resourceData.SetId(utils.BuildId(tfj.ObjectMeta))
 
 	// Wait for TFJob instance's status phase to be succeeded:
-	name := dv.ObjectMeta.Name
-	namespace := dv.ObjectMeta.Namespace
+	name := tfj.ObjectMeta.Name
+	namespace := tfj.ObjectMeta.Namespace
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Creating"},
@@ -61,31 +61,24 @@ func resourceKubeFlowTFJobCreate(resourceData *schema.ResourceData, meta interfa
 		Timeout: resourceData.Timeout(schema.TimeoutCreate),
 		Refresh: func() (interface{}, string, error) {
 			var err error
-			dv, err = cli.GetTFJob(namespace, name)
+			tfj, err = cli.GetTFJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					log.Printf("[DEBUG] TFJob %s is not created yet", name)
-					return dv, "Creating", nil
+					return tfj, "Creating", nil
 				}
-				return dv, "", err
+				return tfj, "", err
 			}
 
-			// switch dv.Status.Phase {
-			// case cdiv1.Succeeded:
-			// 	return dv, "Succeeded", nil
-			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("TFJob failed to be created, finished with phase=\"failed\"")
-			// }
-
 			log.Printf("[DEBUG] TFJob %s is being created", name)
-			return dv, "Creating", nil
+			return tfj, "Creating", nil
 		},
 	}
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return tf_job.ToResourceData(*dv, resourceData)
+	return tf_job.ToResourceData(*tfj, resourceData)
 }
 
 func resourceKubeFlowTFJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -98,14 +91,14 @@ func resourceKubeFlowTFJobRead(resourceData *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Reading TFJob %s", name)
 
-	dv, err := cli.GetTFJob(namespace, name)
+	tfj, err := cli.GetTFJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received TFJob: %#v", dv)
+	log.Printf("[INFO] Received TFJob: %#v", tfj)
 
-	return tf_job.ToResourceData(*dv, resourceData)
+	return tf_job.ToResourceData(*tfj, resourceData)
 }
 
 func resourceKubeFlowTFJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -151,16 +144,16 @@ func resourceKubeFlowTFJobDelete(resourceData *schema.ResourceData, meta interfa
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
 		Refresh: func() (interface{}, string, error) {
-			dv, err := cli.GetTFJob(namespace, name)
+			tfj, err := cli.GetTFJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					return nil, "", nil
 				}
-				return dv, "", err
+				return tfj, "", err
 			}
 
-			log.Printf("[DEBUG] TFJob %s is being deleted", dv.GetName())
-			return dv, "Deleting", nil
+			log.Printf("[DEBUG] TFJob %s is being deleted", tfj.GetName())
+			return tfj, "Deleting", nil
 		},
 	}
 

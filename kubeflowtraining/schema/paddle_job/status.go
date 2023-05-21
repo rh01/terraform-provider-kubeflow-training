@@ -12,12 +12,12 @@ func paddleJobStatusFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"created": &schema.Schema{
 			Type:        schema.TypeBool,
-			Description: "Created indicates if the virtual machine is created in the cluster.",
+			Description: "Created indicates if the PaddleJob is created in the cluster.",
 			Optional:    true,
 		},
 		"ready": &schema.Schema{
 			Type:        schema.TypeBool,
-			Description: "Ready indicates if the virtual machine is running and ready.",
+			Description: "Ready indicates if the PaddleJob is running and ready.",
 			Optional:    true,
 		},
 		"conditions": paddleJobConditionsSchema(),

@@ -126,6 +126,11 @@ func flattenPyTorchJobReplicaSpec(in map[commonv1.ReplicaType]*commonv1.ReplicaS
 		if err != nil {
 			return nil, err
 		}
+		if replicaType == "Master" {
+			replicaType = "master"
+		} else {
+			replicaType = "worker"
+		}
 		m[replicaType] = replicaSpec
 	}
 	return []interface{}{m}, nil

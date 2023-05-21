@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	// metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 )
 
@@ -12,12 +11,12 @@ func xgboostJobStatusFields() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"created": &schema.Schema{
 			Type:        schema.TypeBool,
-			Description: "Created indicates if the virtual machine is created in the cluster.",
+			Description: "Created indicates if the XGBoostJob is created in the cluster.",
 			Optional:    true,
 		},
 		"ready": &schema.Schema{
 			Type:        schema.TypeBool,
-			Description: "Ready indicates if the virtual machine is running and ready.",
+			Description: "Ready indicates if the XGBoostJob is running and ready.",
 			Optional:    true,
 		},
 		"conditions": xgboostJobConditionsSchema(),

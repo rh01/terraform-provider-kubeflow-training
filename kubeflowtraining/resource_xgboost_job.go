@@ -36,24 +36,24 @@ func resourceKubeFlowXGBoostJob() *schema.Resource {
 func resourceKubeFlowXGBoostJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := xgboost_job.FromResourceData(resourceData)
+	xgbj, err := xgboost_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Creating new XGBoostJob: %#v", dv)
-	if err := cli.CreateXGBoostJob(dv); err != nil {
+	log.Printf("[INFO] Creating new XGBoostJob: %#v", xgbj)
+	if err := cli.CreateXGBoostJob(xgbj); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new XGBoostJob: %#v", dv)
-	if err := xgboost_job.ToResourceData(*dv, resourceData); err != nil {
+	log.Printf("[INFO] Submitted new XGBoostJob: %#v", xgbj)
+	if err := xgboost_job.ToResourceData(*xgbj, resourceData); err != nil {
 		return err
 	}
-	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
+	resourceData.SetId(utils.BuildId(xgbj.ObjectMeta))
 
 	// Wait for XGBoostJob instance's status phase to be succeeded:
-	name := dv.ObjectMeta.Name
-	namespace := dv.ObjectMeta.Namespace
+	name := xgbj.ObjectMeta.Name
+	namespace := xgbj.ObjectMeta.Namespace
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Creating"},
@@ -61,31 +61,24 @@ func resourceKubeFlowXGBoostJobCreate(resourceData *schema.ResourceData, meta in
 		Timeout: resourceData.Timeout(schema.TimeoutCreate),
 		Refresh: func() (interface{}, string, error) {
 			var err error
-			dv, err = cli.GetXGBoostJob(namespace, name)
+			xgbj, err = cli.GetXGBoostJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					log.Printf("[DEBUG] XGBoostJob %s is not created yet", name)
-					return dv, "Creating", nil
+					return xgbj, "Creating", nil
 				}
-				return dv, "", err
+				return xgbj, "", err
 			}
 
-			// switch dv.Status.Phase {
-			// case cdiv1.Succeeded:
-			// 	return dv, "Succeeded", nil
-			// case cdiv1.Failed:
-			// 	return dv, "", fmt.Errorf("XGBoostJob failed to be created, finished with phase=\"failed\"")
-			// }
-
 			log.Printf("[DEBUG] XGBoostJob %s is being created", name)
-			return dv, "Creating", nil
+			return xgbj, "Creating", nil
 		},
 	}
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return xgboost_job.ToResourceData(*dv, resourceData)
+	return xgboost_job.ToResourceData(*xgbj, resourceData)
 }
 
 func resourceKubeFlowXGBoostJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -98,14 +91,14 @@ func resourceKubeFlowXGBoostJobRead(resourceData *schema.ResourceData, meta inte
 
 	log.Printf("[INFO] Reading XGBoostJob %s", name)
 
-	dv, err := cli.GetXGBoostJob(namespace, name)
+	xgbj, err := cli.GetXGBoostJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received XGBoostJob: %#v", dv)
+	log.Printf("[INFO] Received XGBoostJob: %#v", xgbj)
 
-	return xgboost_job.ToResourceData(*dv, resourceData)
+	return xgboost_job.ToResourceData(*xgbj, resourceData)
 }
 
 func resourceKubeFlowXGBoostJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -151,16 +144,16 @@ func resourceKubeFlowXGBoostJobDelete(resourceData *schema.ResourceData, meta in
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
 		Refresh: func() (interface{}, string, error) {
-			dv, err := cli.GetXGBoostJob(namespace, name)
+			xgbj, err := cli.GetXGBoostJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					return nil, "", nil
 				}
-				return dv, "", err
+				return xgbj, "", err
 			}
 
-			log.Printf("[DEBUG] XGBoostJob %s is being deleted", dv.GetName())
-			return dv, "Deleting", nil
+			log.Printf("[DEBUG] XGBoostJob %s is being deleted", xgbj.GetName())
+			return xgbj, "Deleting", nil
 		},
 	}
 

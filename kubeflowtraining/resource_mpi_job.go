@@ -36,24 +36,24 @@ func resourceKubeFlowMPIJob() *schema.Resource {
 func resourceKubeFlowMPIJobCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	cli := (meta).(client.Client)
 
-	dv, err := mpi_job.FromResourceData(resourceData)
+	mpij, err := mpi_job.FromResourceData(resourceData)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[INFO] Creating new data volume: %#v", dv)
-	if err := cli.CreateMPIJob(dv); err != nil {
+	log.Printf("[INFO] Creating new data volume: %#v", mpij)
+	if err := cli.CreateMPIJob(mpij); err != nil {
 		return err
 	}
-	log.Printf("[INFO] Submitted new data volume: %#v", dv)
-	if err := mpi_job.ToResourceData(*dv, resourceData); err != nil {
+	log.Printf("[INFO] Submitted new data volume: %#v", mpij)
+	if err := mpi_job.ToResourceData(*mpij, resourceData); err != nil {
 		return err
 	}
-	resourceData.SetId(utils.BuildId(dv.ObjectMeta))
+	resourceData.SetId(utils.BuildId(mpij.ObjectMeta))
 
 	// Wait for data volume instance's status phase to be succeeded:
-	name := dv.ObjectMeta.Name
-	namespace := dv.ObjectMeta.Namespace
+	name := mpij.ObjectMeta.Name
+	namespace := mpij.ObjectMeta.Namespace
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"Creating"},
@@ -61,13 +61,13 @@ func resourceKubeFlowMPIJobCreate(resourceData *schema.ResourceData, meta interf
 		Timeout: resourceData.Timeout(schema.TimeoutCreate),
 		Refresh: func() (interface{}, string, error) {
 			var err error
-			dv, err = cli.GetMPIJob(namespace, name)
+			mpij, err = cli.GetMPIJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					log.Printf("[DEBUG] data volume %s is not created yet", name)
-					return dv, "Creating", nil
+					return mpij, "Creating", nil
 				}
-				return dv, "", err
+				return mpij, "", err
 			}
 
 			// switch dv.Status.Phase {
@@ -78,14 +78,14 @@ func resourceKubeFlowMPIJobCreate(resourceData *schema.ResourceData, meta interf
 			// }
 
 			log.Printf("[DEBUG] data volume %s is being created", name)
-			return dv, "Creating", nil
+			return mpij, "Creating", nil
 		},
 	}
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		return fmt.Errorf("%s", err)
 	}
-	return mpi_job.ToResourceData(*dv, resourceData)
+	return mpi_job.ToResourceData(*mpij, resourceData)
 }
 
 func resourceKubeFlowMPIJobRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -98,14 +98,14 @@ func resourceKubeFlowMPIJobRead(resourceData *schema.ResourceData, meta interfac
 
 	log.Printf("[INFO] Reading data volume %s", name)
 
-	dv, err := cli.GetMPIJob(namespace, name)
+	mpij, err := cli.GetMPIJob(namespace, name)
 	if err != nil {
 		log.Printf("[DEBUG] Received error: %#v", err)
 		return err
 	}
-	log.Printf("[INFO] Received data volume: %#v", dv)
+	log.Printf("[INFO] Received data volume: %#v", mpij)
 
-	return mpi_job.ToResourceData(*dv, resourceData)
+	return mpi_job.ToResourceData(*mpij, resourceData)
 }
 
 func resourceKubeFlowMPIJobUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -119,7 +119,7 @@ func resourceKubeFlowMPIJobUpdate(resourceData *schema.ResourceData, meta interf
 	ops := mpi_job.AppendPatchOps("", "", resourceData, []patch.PatchOperation{})
 	data, err := ops.MarshalJSON()
 	if err != nil {
-		return fmt.Errorf("Failed to marshal update operations: %s", err)
+		return fmt.Errorf("[DEBUG] Failed to marshal update operations: %s", err)
 	}
 
 	log.Printf("[INFO] Updating data volume: %s", ops)
@@ -151,16 +151,16 @@ func resourceKubeFlowMPIJobDelete(resourceData *schema.ResourceData, meta interf
 		Pending: []string{"Deleting"},
 		Timeout: resourceData.Timeout(schema.TimeoutDelete),
 		Refresh: func() (interface{}, string, error) {
-			dv, err := cli.GetMPIJob(namespace, name)
+			mpij, err := cli.GetMPIJob(namespace, name)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					return nil, "", nil
 				}
-				return dv, "", err
+				return mpij, "", err
 			}
 
-			log.Printf("[DEBUG] data volume %s is being deleted", dv.GetName())
-			return dv, "Deleting", nil
+			log.Printf("[DEBUG] data volume %s is being deleted", mpij.GetName())
+			return mpij, "Deleting", nil
 		},
 	}
 
