@@ -2,7 +2,8 @@ package mpi_job
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
+
+	mpiv2beta1 "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v2beta1"
 )
 
 func runPolicyFields() map[string]*schema.Schema {
@@ -69,14 +70,14 @@ func runPolicyFields() map[string]*schema.Schema {
 	}
 }
 
-func expandRunPolicy(runPolicy interface{}) (*commonv1.RunPolicy, error) {
+func expandRunPolicy(runPolicy interface{}) (*mpiv2beta1.RunPolicy, error) {
 	if runPolicy == nil {
 		return nil, nil
 	}
-	rp := &commonv1.RunPolicy{}
+	rp := &mpiv2beta1.RunPolicy{}
 	m := runPolicy.(map[string]interface{})
 	if v, ok := m["clean_pod_policy"]; ok {
-		*rp.CleanPodPolicy = commonv1.CleanPodPolicy(v.(string))
+		*rp.CleanPodPolicy = mpiv2beta1.CleanPodPolicy(v.(string))
 	}
 	if v, ok := m["ttl_seconds_after_finished"]; ok {
 		*rp.TTLSecondsAfterFinished = int32(v.(int))
@@ -93,12 +94,12 @@ func expandRunPolicy(runPolicy interface{}) (*commonv1.RunPolicy, error) {
 	return rp, nil
 }
 
-func expandSchedulingPolicy(v interface{}) *commonv1.SchedulingPolicy {
+func expandSchedulingPolicy(v interface{}) *mpiv2beta1.SchedulingPolicy {
 	if v == nil {
 		return nil
 	}
 	m := v.([]interface{})[0].(map[string]interface{})
-	sp := &commonv1.SchedulingPolicy{}
+	sp := &mpiv2beta1.SchedulingPolicy{}
 	if v, ok := m["min_available"]; ok {
 		*sp.MinAvailable = int32(v.(int))
 	}
@@ -117,7 +118,7 @@ func expandSchedulingPolicy(v interface{}) *commonv1.SchedulingPolicy {
 	return sp
 }
 
-func flattenSchedulingPolicy(sp *commonv1.SchedulingPolicy) []interface{} {
+func flattenSchedulingPolicy(sp *mpiv2beta1.SchedulingPolicy) []interface{} {
 	if sp == nil {
 		return []interface{}{}
 	}
@@ -141,7 +142,7 @@ func flattenSchedulingPolicy(sp *commonv1.SchedulingPolicy) []interface{} {
 	return []interface{}{m}
 }
 
-func flattenRunPolicy(rp commonv1.RunPolicy) map[string]interface{} {
+func flattenRunPolicy(rp mpiv2beta1.RunPolicy) map[string]interface{} {
 	m := map[string]interface{}{}
 
 	if rp.CleanPodPolicy != nil {

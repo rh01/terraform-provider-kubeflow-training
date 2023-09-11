@@ -1,13 +1,13 @@
 package mpi_job
 
 import (
-	// "github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/k8s"
-	// "github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/utils/patch"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	"github.com/rh01/terraform-provider-kubeflow-training/kubeflowtraining/schema/kubernetes"
+
+	mpiv2beta1 "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v2beta1"
 )
 
 func mpiJobReplicaSpecFields() map[string]*schema.Schema {
@@ -50,12 +50,12 @@ func mpiJobReplicaSpecSchema() *schema.Schema {
 	}
 }
 
-func expandMPIReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*commonv1.ReplicaSpec, error) {
+func expandMPIReplicaSpec(l []interface{}) (map[mpiv2beta1.MPIReplicaType]*commonv1.ReplicaSpec, error) {
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
 	}
 
-	m := make(map[commonv1.ReplicaType]*commonv1.ReplicaSpec)
+	m := make(map[mpiv2beta1.MPIReplicaType]*commonv1.ReplicaSpec)
 	for k, v := range l[0].(map[string]interface{}) {
 		if !strings.EqualFold(k, "launcher") && !strings.EqualFold(k, "worker") {
 			continue
@@ -65,7 +65,7 @@ func expandMPIReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*commonv1.R
 		} else {
 			k = "Worker"
 		}
-		replicaType := commonv1.ReplicaType(k)
+		replicaType := mpiv2beta1.MPIReplicaType(k)
 		replicaSpec, err := expandMPIJobReplicaSpec(v.([]interface{}))
 		if err != nil {
 			return nil, err
@@ -76,7 +76,7 @@ func expandMPIReplicaSpec(l []interface{}) (map[commonv1.ReplicaType]*commonv1.R
 	return m, nil
 }
 
-func flattenMPIReplicaSpec(in map[commonv1.ReplicaType]*commonv1.ReplicaSpec) ([]interface{}, error) {
+func flattenMPIReplicaSpec(in map[mpiv2beta1.MPIReplicaType]*commonv1.ReplicaSpec) ([]interface{}, error) {
 	if in == nil {
 		return []interface{}{nil}, nil
 	}

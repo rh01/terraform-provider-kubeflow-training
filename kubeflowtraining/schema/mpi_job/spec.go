@@ -4,8 +4,12 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
-	kubeflowv1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
+
+	// mpiv2beta1 "github.com/kubeflow/training-operator/pkg/apis/kubeflow.org/v1"
+
+	mpiv2beta1 "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v2beta1"
+	// mpiVersioned "github.com/kubeflow/mpi-operator/pkg/client/clientset/versioned"
+	// mpiInformer "github.com/kubeflow/mpi-operator/pkg/client/informers/externalversions"
 )
 
 func mpiJobSpecFields() map[string]*schema.Schema {
@@ -61,8 +65,8 @@ func mpiJobSpecSchema() *schema.Schema {
 
 }
 
-func expandMPIJobSpec(mpiJob []interface{}) (kubeflowv1.MPIJobSpec, error) {
-	result := kubeflowv1.MPIJobSpec{}
+func expandMPIJobSpec(mpiJob []interface{}) (mpiv2beta1.MPIJobSpec, error) {
+	result := mpiv2beta1.MPIJobSpec{}
 
 	if len(mpiJob) == 0 || mpiJob[0] == nil {
 		return result, nil
@@ -89,14 +93,6 @@ func expandMPIJobSpec(mpiJob []interface{}) (kubeflowv1.MPIJobSpec, error) {
 		result.MPIReplicaSpecs = mpiReplicaSpecs
 	}
 
-	if v, ok := mpiJobMap["main_container"]; ok {
-		result.MainContainer = v.(string)
-	}
-
-	if v, ok := mpiJobMap["clean_pod_policy"]; ok {
-		*result.CleanPodPolicy = commonv1.CleanPodPolicy(v.(string))
-	}
-
 	if v, ok := mpiJobMap["slots_per_worker"]; ok {
 		*result.SlotsPerWorker = int32(v.(int))
 	}
@@ -104,20 +100,10 @@ func expandMPIJobSpec(mpiJob []interface{}) (kubeflowv1.MPIJobSpec, error) {
 	return result, nil
 }
 
-func flattenMPIJobSpec(in kubeflowv1.MPIJobSpec) []interface{} {
+func flattenMPIJobSpec(in mpiv2beta1.MPIJobSpec) []interface{} {
 	att := make(map[string]interface{})
 
 	att["run_policy"] = flattenRunPolicy(in.RunPolicy)
-
-	if in.MPIReplicaSpecs != nil {
-		att["mpi_replica_specs"], _ = flattenMPIReplicaSpec(in.MPIReplicaSpecs)
-	}
-
-	att["main_container"] = in.MainContainer
-
-	if in.CleanPodPolicy != nil {
-		att["clean_pod_policy"] = string(*in.CleanPodPolicy)
-	}
 
 	if in.SlotsPerWorker != nil {
 		att["slots_per_worker"] = int(*in.SlotsPerWorker)

@@ -21,3 +21,4 @@ coverage.out
 .DS_Store
 .terraform.lock.hcl
 terraform.tfvars
+dist/

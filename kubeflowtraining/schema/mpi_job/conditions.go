@@ -5,8 +5,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
 	corev1 "k8s.io/api/core/v1"
+
+	mpiv2beta1 "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v2beta1"
 )
 
 func mpiJobConditionsFields() map[string]*schema.Schema {
@@ -61,8 +62,8 @@ func mpiJobConditionsSchema() *schema.Schema {
 
 }
 
-func expandMPIJobConditions(conditions []interface{}) ([]commonv1.JobCondition, error) {
-	result := make([]commonv1.JobCondition, len(conditions))
+func expandMPIJobConditions(conditions []interface{}) ([]mpiv2beta1.JobCondition, error) {
+	result := make([]mpiv2beta1.JobCondition, len(conditions))
 
 	if len(conditions) == 0 || conditions[0] == nil {
 		return result, nil
@@ -70,8 +71,8 @@ func expandMPIJobConditions(conditions []interface{}) ([]commonv1.JobCondition, 
 
 	for i, v := range conditions {
 		c := v.(map[string]interface{})
-		result[i] = commonv1.JobCondition{
-			Type:    commonv1.JobConditionType(c["type"].(string)),
+		result[i] = mpiv2beta1.JobCondition{
+			Type:    mpiv2beta1.JobConditionType(c["type"].(string)),
 			Status:  corev1.ConditionStatus(c["status"].(string)),
 			Reason:  c["reason"].(string),
 			Message: c["message"].(string),
@@ -81,7 +82,7 @@ func expandMPIJobConditions(conditions []interface{}) ([]commonv1.JobCondition, 
 	return result, nil
 }
 
-func flattenMPIJobConditions(in []commonv1.JobCondition) []interface{} {
+func flattenMPIJobConditions(in []mpiv2beta1.JobCondition) []interface{} {
 	att := make([]interface{}, len(in))
 
 	for i, v := range in {

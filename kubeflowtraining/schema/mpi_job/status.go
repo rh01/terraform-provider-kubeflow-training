@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	// metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
+	mpiv2beta1 "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v2beta1"
 )
 
 func mpiJobStatusFields() map[string]*schema.Schema {
@@ -26,15 +25,15 @@ func mpiJobReplicaStatusesSchema() *schema.Schema {
 		},
 	}
 }
-func expandMPIJobReplicaStatuses(in []interface{}) (map[commonv1.ReplicaType]*commonv1.ReplicaStatus, error) {
-	result := make(map[commonv1.ReplicaType]*commonv1.ReplicaStatus)
+func expandMPIJobReplicaStatuses(in []interface{}) (map[mpiv2beta1.MPIReplicaType]*mpiv2beta1.ReplicaStatus, error) {
+	result := make(map[mpiv2beta1.MPIReplicaType]*mpiv2beta1.ReplicaStatus)
 
 	if len(in) == 0 || in[0] == nil {
 		return result, nil
 	}
 
 	for _, v := range in {
-		replicaStatus := &commonv1.ReplicaStatus{}
+		replicaStatus := &mpiv2beta1.ReplicaStatus{}
 		if err := expandMPIJobReplicaStatus(v, replicaStatus); err != nil {
 			return result, err
 		}
@@ -43,7 +42,7 @@ func expandMPIJobReplicaStatuses(in []interface{}) (map[commonv1.ReplicaType]*co
 	return result, nil
 }
 
-func flattenMPIJobStatus(in commonv1.JobStatus) []interface{} {
+func flattenMPIJobStatus(in mpiv2beta1.JobStatus) []interface{} {
 	att := make(map[string]interface{})
 
 	att["conditions"] = flattenMPIJobConditions(in.Conditions)
@@ -54,7 +53,7 @@ func flattenMPIJobStatus(in commonv1.JobStatus) []interface{} {
 
 }
 
-func flattenMPIJobReplicaStatuses(in map[commonv1.ReplicaType]*commonv1.ReplicaStatus) []interface{} {
+func flattenMPIJobReplicaStatuses(in map[mpiv2beta1.MPIReplicaType]*mpiv2beta1.ReplicaStatus) []interface{} {
 	result := make([]interface{}, 0)
 
 	for _, v := range in {
@@ -109,8 +108,8 @@ func mpiJobStatusSchema() *schema.Schema {
 
 }
 
-func expandMPIJobStatus(mpiJobStatus []interface{}) (commonv1.JobStatus, error) {
-	result := commonv1.JobStatus{}
+func expandMPIJobStatus(mpiJobStatus []interface{}) (mpiv2beta1.JobStatus, error) {
+	result := mpiv2beta1.JobStatus{}
 
 	if len(mpiJobStatus) == 0 || mpiJobStatus[0] == nil {
 		return result, nil
@@ -129,7 +128,7 @@ func expandMPIJobStatus(mpiJobStatus []interface{}) (commonv1.JobStatus, error) 
 	return result, nil
 }
 
-func flattenMPIJobReplicaStatus(in *commonv1.ReplicaStatus) map[string]interface{} {
+func flattenMPIJobReplicaStatus(in *mpiv2beta1.ReplicaStatus) map[string]interface{} {
 	att := make(map[string]interface{})
 
 	att["active"] = in.Active
@@ -143,7 +142,7 @@ func flattenMPIJobReplicaStatus(in *commonv1.ReplicaStatus) map[string]interface
 	return att
 }
 
-func expandMPIJobReplicaStatus(in interface{}, out *commonv1.ReplicaStatus) error {
+func expandMPIJobReplicaStatus(in interface{}, out *mpiv2beta1.ReplicaStatus) error {
 
 	if in == nil {
 		return nil
